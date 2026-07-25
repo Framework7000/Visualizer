@@ -60,11 +60,21 @@ export default function App() {
         <div className="masthead-spacer" />
 
         <div className="header-actions">
-          {/* Sleek Combined Gamification Badge */}
-          <div className="badge-pill gamify-combined" title="3 Day Streak · 150 XP">
-            <span className="streak-tag">3 STREAK</span>
-            <span className="dot-sep">•</span>
-            <span className="xp-tag">150 XP</span>
+          {/* Symbolic Vector Gamification Pill */}
+          <div className="gamify-symbolic" title="3 Day Streak · 150 XP">
+            <span className="gamify-stat streak">
+              <svg className="flame-icon" width="13" height="13" viewBox="0 0 24 24">
+                <path d="M12 2C10.5 4.5 9 6.5 9 9C9 12 11 14 13 14C14.5 14 16 13 16.5 11.5C18 13.5 18 16 16.5 18.5C15 21 12.5 22 10 22C6.5 22 4 19 4 15C4 10 8 5.5 12 2Z"/>
+              </svg>
+              <span>3</span>
+            </span>
+            <span className="stat-divider" />
+            <span className="gamify-stat xp">
+              <svg className="zap-icon" width="13" height="13" viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>150</span>
+            </span>
           </div>
 
           <div className="mode-toggle-pills" role="tablist" aria-label="Choose a mode">
