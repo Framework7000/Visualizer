@@ -1199,13 +1199,125 @@ button {
   color: var(--accent);
 }
 
-/* ---------- Responsiveness ---------- */
+/* ---------- Mobile Bottom Navigation Bar ---------- */
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(14, 18, 30, 0.94);
+  backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border-glass-strong);
+  z-index: 999;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 10px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.mobile-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  color: var(--ink-muted);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.mobile-nav-btn.active {
+  color: var(--accent);
+}
+
+.mobile-nav-btn.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 36px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 0 0 4px 4px;
+  box-shadow: var(--glow-accent);
+}
+
+.mobile-nav-btn.has-badge::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 25%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: var(--glow-accent);
+}
+
+/* ---------- Responsiveness (PC, Tablet & Mobile Adjustments) ---------- */
+
+@media (max-width: 1200px) {
+  .app {
+    max-width: 100%;
+  }
+}
 
 @media (max-width: 940px) {
   .app {
-    padding: 10px;
+    height: auto;
+    min-height: 100vh;
+    padding: 10px 10px 76px 10px;
   }
+
+  .masthead-floating {
+    padding: 8px 14px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-editor, .panel-visualizer, .mode-examples {
+    display: none;
+  }
+
+  .panel-editor.mobile-show,
+  .panel-visualizer.mobile-show,
+  .mode-examples.mobile-show {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-nav {
+    display: flex;
+  }
+
   .gamify-badges, .brand-subtitle, .footer-center, .footer-right {
     display: none;
+  }
+
+  .app-footer {
+    border-radius: 12px;
+    padding: 8px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-btn.cmd-btn {
+    padding: 6px 10px;
+  }
+  .cmd-text {
+    display: none;
+  }
+  .mode-pill {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
