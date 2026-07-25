@@ -25,6 +25,7 @@ export default function LearnMode({
 }: Props) {
   const [code, setCode] = useState(seedCode ?? loadCode('learn') ?? DEFAULT_EXAMPLE.code)
   const [activeExample, setActiveExample] = useState(DEFAULT_EXAMPLE.id)
+  const lastSelectedExampleRef = useRef(DEFAULT_EXAMPLE.id)
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
@@ -106,12 +107,22 @@ export default function LearnMode({
     const ex = EXAMPLES.find((e) => e.id === id)
     if (!ex) return
     setActiveExample(id)
+    lastSelectedExampleRef.current = id
     setCode(ex.code)
     setIndex(0)
     setPlaying(false)
     if (ex.id.startsWith('turtle_')) {
       setMobileTab('turtle')
     }
+  }
+
+  function handleResetExample() {
+    const targetId = activeExample || lastSelectedExampleRef.current || DEFAULT_EXAMPLE.id
+    const ex = EXAMPLES.find((e) => e.id === targetId) || DEFAULT_EXAMPLE
+    setActiveExample(ex.id)
+    setCode(ex.code)
+    setIndex(0)
+    setPlaying(false)
   }
 
   function handleCodeChange(next: string) {
@@ -172,7 +183,7 @@ export default function LearnMode({
     }
   }
 
-  const currentExample = EXAMPLES.find((e) => e.id === activeExample)
+  const currentExample = EXAMPLES.find((e) => e.id === (activeExample || lastSelectedExampleRef.current))
 
   return (
     <>
@@ -200,7 +211,7 @@ export default function LearnMode({
             <span className="lang-tag">Python 3.11</span>
             <div className="panel-head-spacer" />
             <button
-              className="icon-btn labeled sm"
+              className="blocks-toggle-btn"
               onClick={() => setShowBlocks((b) => !b)}
               title="Toggle Quick Code Blocks"
             >
@@ -236,7 +247,7 @@ export default function LearnMode({
             <button className="btn primary glow" onClick={handleRunFromStart} disabled={total === 0}>
               Run &amp; Watch
             </button>
-            <button className="btn ghost" onClick={() => loadExample(activeExample || DEFAULT_EXAMPLE.id)}>
+            <button className="btn ghost" onClick={handleResetExample}>
               Reset example
             </button>
           </div>

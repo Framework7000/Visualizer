@@ -393,6 +393,29 @@ button {
   font-family: var(--mono);
 }
 
+.blocks-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 5px 12px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--ink-secondary);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.blocks-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+  border-color: var(--border-glass-strong);
+}
+
 .panel-head-spacer {
   flex: 1;
 }
@@ -414,15 +437,23 @@ button {
 .gutter {
   width: 44px;
   padding-top: 14px;
+  padding-bottom: 14px;
   background: #1E1E1E;
   border-right: 1px solid rgba(255, 255, 255, 0.07);
   user-select: none;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 13.5px;
   color: #858585;
   text-align: right;
   padding-right: 10px;
   overflow: hidden;
+}
+
+.gutter-num {
+  height: 24px;
+  line-height: 24px;
+  font-size: 13.5px;
+  box-sizing: border-box;
 }
 
 .gutter-num.active {
