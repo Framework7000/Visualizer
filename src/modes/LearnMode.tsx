@@ -44,7 +44,6 @@ export default function LearnMode({
   const activeLine = playing || clampedIndex > 0 || result.error ? frame?.line ?? 0 : 0
   const hasTurtle = frames.some((f) => Boolean(f.turtle))
 
-  // Sound synthesis & Confetti trigger on completion
   useEffect(() => {
     if (clampedIndex > 0) {
       soundSynth.playStep()
@@ -55,7 +54,6 @@ export default function LearnMode({
     }
   }, [clampedIndex, total])
 
-  // Playback timer
   const intervalRef = useRef<number | null>(null)
   useEffect(() => {
     if (!playing) return
@@ -84,7 +82,6 @@ export default function LearnMode({
     if (registerSelectExample) registerSelectExample(loadExample)
   }, [registerRun, registerSelectExample])
 
-  // Keyboard shortcuts
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return
@@ -164,7 +161,7 @@ export default function LearnMode({
             onClick={() => loadExample(ex.id)}
             title={ex.description}
           >
-            <span>{ex.emoji}</span>
+            <span className="example-tag-badge">{ex.tag}</span>
             <span>{ex.title}</span>
           </button>
         ))}
@@ -182,7 +179,7 @@ export default function LearnMode({
               onClick={() => setShowBlocks((b) => !b)}
               title="Toggle Quick Code Blocks"
             >
-              🧱 <span>{showBlocks ? 'Hide Blocks' : 'Show Blocks'}</span>
+              <span>{showBlocks ? 'Hide Blocks' : 'Show Blocks'}</span>
             </button>
           </div>
 
@@ -192,7 +189,7 @@ export default function LearnMode({
 
           {result.error && (
             <p className="error-banner">
-              <span>🐛</span>
+              <span className="error-tag">ERROR</span>
               <span>
                 {result.error}
                 {result.errorLine ? ` (line ${result.errorLine})` : ''}
@@ -202,10 +199,10 @@ export default function LearnMode({
 
           <div className="toolbar">
             <button className="btn primary glow" onClick={handleRunFromStart} disabled={total === 0}>
-              ▶ Run &amp; Watch
+              Run &amp; Watch
             </button>
             <button className="btn ghost" onClick={() => loadExample(activeExample || DEFAULT_EXAMPLE.id)}>
-              ↺ Reset example
+              Reset example
             </button>
           </div>
         </section>

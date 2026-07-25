@@ -4,7 +4,6 @@ interface CommandItem {
   id: string
   title: string
   category: 'Actions' | 'Examples' | 'Modes'
-  icon: string
   shortcut?: string
   action: () => void
 }
@@ -50,7 +49,6 @@ export default function CommandPalette({
       id: 'run',
       title: 'Run & Watch Program',
       category: 'Actions',
-      icon: '▶️',
       shortcut: 'Space',
       action: () => {
         onRun()
@@ -61,7 +59,6 @@ export default function CommandPalette({
       id: 'mode_learn',
       title: 'Switch to Learn Mode (Visualizer)',
       category: 'Modes',
-      icon: '🎓',
       action: () => {
         onSelectMode('learn')
         onClose()
@@ -71,7 +68,6 @@ export default function CommandPalette({
       id: 'mode_python',
       title: 'Switch to Real Python Lab',
       category: 'Modes',
-      icon: '🐍',
       action: () => {
         onSelectMode('python')
         onClose()
@@ -81,7 +77,6 @@ export default function CommandPalette({
       id: 'ex_star',
       title: 'Load Example: Glowing Star (Turtle)',
       category: 'Examples',
-      icon: '🐢',
       action: () => {
         onSelectExample('turtle_star')
         onClose()
@@ -91,7 +86,6 @@ export default function CommandPalette({
       id: 'ex_spiral',
       title: 'Load Example: Rainbow Spiral (Turtle)',
       category: 'Examples',
-      icon: '🎨',
       action: () => {
         onSelectExample('turtle_spiral')
         onClose()
@@ -101,7 +95,6 @@ export default function CommandPalette({
       id: 'ex_stars',
       title: 'Load Example: Counting Stars',
       category: 'Examples',
-      icon: '⭐',
       action: () => {
         onSelectExample('counting')
         onClose()
@@ -111,7 +104,6 @@ export default function CommandPalette({
       id: 'sound',
       title: 'Toggle Step Audio Feedback',
       category: 'Actions',
-      icon: '🔊',
       action: () => {
         onToggleSound()
         onClose()
@@ -131,7 +123,6 @@ export default function CommandPalette({
     <div className="cmd-backdrop" onClick={onClose}>
       <div className="cmd-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cmd-input-wrapper">
-          <span className="cmd-search-icon">🔍</span>
           <input
             type="text"
             className="cmd-input"
@@ -152,7 +143,6 @@ export default function CommandPalette({
                 className="cmd-item"
                 onClick={item.action}
               >
-                <span className="cmd-item-icon">{item.icon}</span>
                 <span className="cmd-item-title">{item.title}</span>
                 <span className="cmd-item-cat">{item.category}</span>
                 {item.shortcut && <span className="cmd-shortcut">{item.shortcut}</span>}

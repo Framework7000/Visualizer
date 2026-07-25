@@ -39,9 +39,9 @@ class Interpreter {
 
   run(program: Stmt[]): Frame[] {
     const firstLine = program.length > 0 ? program[0].line : 0
-    this.snap(firstLine, 'Ready to run! Press play. ▶️', 'start')
+    this.snap(firstLine, 'Ready to run! Press play.', 'start')
     this.execBlock(program)
-    this.snap(0, 'All done! 🎉', 'done')
+    this.snap(0, 'All done!', 'done')
     return this.frames
   }
 
@@ -148,11 +148,11 @@ class Interpreter {
   private execIf(stmt: Extract<Stmt, { kind: 'if' }>): Signal {
     for (const branch of stmt.branches) {
       const cond = this.evalCond(branch.cond)
-      this.snap(stmt.line, `Check the rule → ${cond ? 'YES, it is true ✅' : 'no, not true ❌'}`, 'check')
+      this.snap(stmt.line, `Check the rule -> ${cond ? 'YES, it is true' : 'no, not true'}`, 'check')
       if (cond) return this.execBlock(branch.body)
     }
     if (stmt.elseBody) {
-      this.snap(stmt.line, 'None of the rules matched — do the “else” part.', 'check')
+      this.snap(stmt.line, 'None of the rules matched — do the "else" part.', 'check')
       return this.execBlock(stmt.elseBody)
     }
     return 'normal'
@@ -162,11 +162,10 @@ class Interpreter {
     while (true) {
       this.tick(stmt.line)
       const cond = this.evalCond(stmt.cond)
-      this.snap(stmt.line, `Should the loop keep going? → ${cond ? 'yes, again 🔁' : 'no, stop ⏹️'}`, 'check')
+      this.snap(stmt.line, `Should the loop keep going? -> ${cond ? 'yes, again' : 'no, stop'}`, 'check')
       if (!cond) break
       const sig = this.execBlock(stmt.body)
       if (sig === 'break') break
-      // 'continue' and 'normal' both fall through to re-check the condition
     }
     return 'normal'
   }
@@ -366,7 +365,7 @@ class Interpreter {
         }
         this.turtleX = nx
         this.turtleY = ny
-        this.lastCallNote = `🐢 Turtle: move forward ${dist}`
+        this.lastCallNote = `Turtle: move forward ${dist}`
         return dist
       }
       case 'backward':
@@ -388,7 +387,7 @@ class Interpreter {
         }
         this.turtleX = nx
         this.turtleY = ny
-        this.lastCallNote = `🐢 Turtle: move backward ${dist}`
+        this.lastCallNote = `Turtle: move backward ${dist}`
         return dist
       }
       case 'left':
@@ -396,7 +395,7 @@ class Interpreter {
         const deg = this.numeric(this.eval(this.oneArg(expr, line)), line)
         this.usedTurtle = true
         this.turtleAngle = (this.turtleAngle + deg) % 360
-        this.lastCallNote = `🐢 Turtle: turn left ${deg}°`
+        this.lastCallNote = `Turtle: turn left ${deg}°`
         return deg
       }
       case 'right':
@@ -404,28 +403,28 @@ class Interpreter {
         const deg = this.numeric(this.eval(this.oneArg(expr, line)), line)
         this.usedTurtle = true
         this.turtleAngle = (this.turtleAngle - deg) % 360
-        this.lastCallNote = `🐢 Turtle: turn right ${deg}°`
+        this.lastCallNote = `Turtle: turn right ${deg}°`
         return deg
       }
       case 'pen_up':
       case 'penup': {
         this.usedTurtle = true
         this.turtlePenDown = false
-        this.lastCallNote = '🐢 Turtle: pen up 🖊️'
+        this.lastCallNote = 'Turtle: pen up'
         return true
       }
       case 'pen_down':
       case 'pendown': {
         this.usedTurtle = true
         this.turtlePenDown = true
-        this.lastCallNote = '🐢 Turtle: pen down ✏️'
+        this.lastCallNote = 'Turtle: pen down'
         return true
       }
       case 'color': {
         const c = this.eval(this.oneArg(expr, line))
         this.usedTurtle = true
         this.turtleColor = String(c)
-        this.lastCallNote = `🐢 Turtle: set color to ${c}`
+        this.lastCallNote = `Turtle: set color to ${c}`
         return String(c)
       }
       case 'clear': {
@@ -434,7 +433,7 @@ class Interpreter {
         this.turtleX = 0
         this.turtleY = 0
         this.turtleAngle = 90
-        this.lastCallNote = '🐢 Turtle: canvas cleared'
+        this.lastCallNote = 'Turtle: canvas cleared'
         return true
       }
       default:

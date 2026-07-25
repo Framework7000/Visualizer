@@ -7,22 +7,21 @@ import TurtleCanvas from './TurtleCanvas'
 
 interface Props {
   frame: Frame | null
-  aboveVars?: ReactNode // optional extra viz (e.g. recursion tree)
+  aboveVars?: ReactNode
   activeStageTab?: 'memory' | 'turtle'
   onTabChange?: (tab: 'memory' | 'turtle') => void
 }
 
-const ICONS: Record<StepKind, string> = {
-  start: '🎬',
-  assign: '📦',
-  print: '🖨️',
-  check: '🤔',
-  loop: '🔁',
-  update: '✏️',
-  done: '🎉',
+const STEP_LABELS: Record<StepKind, string> = {
+  start: 'START',
+  assign: 'SET',
+  print: 'PRINT',
+  check: 'CHECK',
+  loop: 'LOOP',
+  update: 'UPDATE',
+  done: 'DONE',
 }
 
-// The right-hand "movie screen": call stack, narration, live variables, turtle canvas, console.
 export default function Stage({ frame, aboveVars, activeStageTab, onTabChange }: Props) {
   const vars = frame?.vars ?? {}
   const accesses = frame?.accesses ?? []
@@ -40,7 +39,6 @@ export default function Stage({ frame, aboveVars, activeStageTab, onTabChange }:
     if (onTabChange) onTabChange(v)
   }
 
-  // Automatically switch view to turtle when turtle drawing is active
   useEffect(() => {
     if (hasTurtle && !activeStageTab) {
       setView('turtle')
@@ -52,13 +50,13 @@ export default function Stage({ frame, aboveVars, activeStageTab, onTabChange }:
       <motion.div
         className="narration"
         key={note}
-        initial={{ opacity: 0, y: -6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
+        initial={{ opacity: 0, y: -6, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.25, type: 'spring', stiffness: 400, damping: 25 }}
       >
-        <div className="icon">{ICONS[kind]}</div>
+        <div className="step-tag-pill">{STEP_LABELS[kind]}</div>
         <div className="text">{note}</div>
-        {frame && frame.line > 0 && <div className="line-badge">line {frame.line}</div>}
+        {frame && frame.line > 0 && <div className="line-badge">Line {frame.line}</div>}
       </motion.div>
 
       {stack.length > 0 && (
@@ -82,20 +80,19 @@ export default function Stage({ frame, aboveVars, activeStageTab, onTabChange }:
         </div>
       )}
 
-      {/* Stage Tab Switcher if Turtle graphics are present */}
       {hasTurtle && (
         <div className="stage-tabs">
           <button
             className={`stage-tab-btn ${currentView === 'turtle' ? 'active' : ''}`}
             onClick={() => setStageView('turtle')}
           >
-            🐢 Turtle Canvas
+            Turtle Canvas
           </button>
           <button
             className={`stage-tab-btn ${currentView === 'memory' ? 'active' : ''}`}
             onClick={() => setStageView('memory')}
           >
-            📦 Memory Grid
+            Memory Grid
           </button>
         </div>
       )}
@@ -105,14 +102,22 @@ export default function Stage({ frame, aboveVars, activeStageTab, onTabChange }:
       {hasTurtle && currentView === 'turtle' ? (
         <TurtleCanvas turtle={frame?.turtle} />
       ) : (
-        <>
-          <div className="stage-section-title">Variables — the computer's memory</div>
+        <div className="stage-section">
+          <div className="stage-section-title">
+            <span className="title-text">Variables</span>
+            <span className="title-sub">— live computer memory</span>
+          </div>
           <VariablesPanel vars={vars} accesses={accesses} />
-        </>
+        </div>
       )}
 
-      <div className="stage-section-title">Output screen</div>
-      <Console lines={output} />
+      <div className="stage-section">
+        <div className="stage-section-title">
+          <span className="title-text">Console Output</span>
+          <span className="title-sub">— print() screen</span>
+        </div>
+        <Console lines={output} />
+      </div>
     </div>
   )
 }

@@ -21,7 +21,6 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
   const [isCmdOpen, setIsCmdOpen] = useState<boolean>(false)
 
-  // Latest code from each mode, so "Share" can capture it.
   const codes = useRef<Record<ModeName, string>>({ learn: '', python: '' })
   const learnModeTriggerRun = useRef<(() => void) | null>(null)
   const learnModeSelectExample = useRef<((id: string) => void) | null>(null)
@@ -45,9 +44,9 @@ export default function App() {
     try {
       window.history.replaceState(null, '', url)
       await navigator.clipboard.writeText(url)
-      setToast('Share link copied to clipboard 🔗')
+      setToast('Share link copied to clipboard')
     } catch {
-      setToast('Share link is in your address bar 🔗')
+      setToast('Share link is in your address bar')
     }
   }
 
@@ -57,9 +56,13 @@ export default function App() {
       <header className="masthead-floating">
         <div className="brand">
           <div className="brand-logo-container">
-            <span className="grad-cap">🎓</span>
+            <svg className="brand-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
             <span className="brand-g">Grade</span>
             <span className="brand-next-badge">Next <span className="next-arrow">❯</span></span>
+            <span className="tm-badge">™</span>
           </div>
           <span className="brand-subtitle">// watch your code come alive</span>
         </div>
@@ -67,15 +70,14 @@ export default function App() {
         <div className="masthead-spacer" />
 
         <div className="header-actions">
-          {/* Streak & XP Gamification Badges */}
           <div className="gamify-badges">
             <div className="badge-pill streak" title="3 Day Learning Streak!">
-              <span>🔥</span>
+              <span className="badge-label">STREAK</span>
               <span className="badge-num">3</span>
             </div>
             <div className="badge-pill xp" title="150 Coding XP Earned!">
-              <span>⭐</span>
-              <span className="badge-num">150 XP</span>
+              <span className="badge-label">XP</span>
+              <span className="badge-num">150</span>
             </div>
           </div>
 
@@ -86,7 +88,7 @@ export default function App() {
               className={`mode-pill ${mode === 'learn' ? 'active' : ''}`}
               onClick={() => setMode('learn')}
             >
-              🎓 Learn
+              Learn Mode
             </button>
             <button
               role="tab"
@@ -94,7 +96,7 @@ export default function App() {
               className={`mode-pill ${mode === 'python' ? 'active' : ''}`}
               onClick={() => setMode('python')}
             >
-              🐍 Real Python
+              Real Python
             </button>
           </div>
 
@@ -103,7 +105,8 @@ export default function App() {
             onClick={() => setIsCmdOpen(true)}
             title="Open Command Palette (⌘K)"
           >
-            🔍 <span className="cmd-text">⌘K</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span className="cmd-text">⌘K</span>
           </button>
 
           <button
@@ -112,11 +115,11 @@ export default function App() {
             title={soundEnabled ? 'Mute step audio' : 'Enable step audio'}
             aria-label="Toggle step audio feedback"
           >
-            {soundEnabled ? '🔊' : '🔇'}
+            {soundEnabled ? 'Audio On' : 'Audio Muted'}
           </button>
 
           <button className="icon-btn labeled" onClick={handleShare} title="Copy a share link">
-            🔗 <span>Share</span>
+            <span>Share</span>
           </button>
 
           <button
@@ -125,7 +128,7 @@ export default function App() {
             title="Toggle light / dark"
             aria-label="Toggle light or dark theme"
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
         </div>
       </header>
@@ -146,8 +149,8 @@ export default function App() {
 
       <p className="footer-note">
         {mode === 'learn'
-          ? 'GradeNext Learn Mode · Step-by-step visual code execution engine for young learners (Grades 2–8) 💡'
-          : 'GradeNext Real Python Mode · Genuine CPython (pandas, scikit-learn, matplotlib) in your browser 🐍'}
+          ? 'GradeNext Learn Mode · Step-by-step visual code execution engine for young learners (Grades 2–8)'
+          : 'GradeNext Real Python Mode · Genuine CPython (pandas, scikit-learn, matplotlib) in your browser'}
       </p>
 
       {toast && <div className="toast">{toast}</div>}

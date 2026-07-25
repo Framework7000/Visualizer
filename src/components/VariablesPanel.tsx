@@ -30,7 +30,6 @@ export default function VariablesPanel({ vars, accesses }: Props) {
   if (entries.length === 0) {
     return (
       <div className="empty-hint-card">
-        <div className="empty-hint-icon">✨</div>
         <div className="empty-hint-title">No Variables In Memory Yet</div>
         <div className="empty-hint-sub">Type variables or run an example to watch memory boxes populate live.</div>
       </div>

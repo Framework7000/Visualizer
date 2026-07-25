@@ -113,7 +113,7 @@ export default function TurtleCanvas({ turtle }: Props) {
   return (
     <div className="turtle-container">
       <div className="turtle-header">
-        <span className="turtle-title">🐢 Turtle Canvas 2D</span>
+        <span className="turtle-title">Turtle Canvas 2D</span>
         {turtle && (
           <span className="turtle-pos">
             x: {Math.round(turtle.x)}, y: {Math.round(turtle.y)}, angle: {Math.round(turtle.angle)}°

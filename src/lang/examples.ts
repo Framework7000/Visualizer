@@ -1,10 +1,7 @@
-// Ready-made programs, from very simple to more exciting, so a learner can
-// press a button and immediately watch something come alive.
-
 export interface Example {
   id: string
   title: string
-  emoji: string
+  tag: string
   grade: string
   description: string
   code: string
@@ -14,7 +11,7 @@ export const EXAMPLES: Example[] = [
   {
     id: 'counting',
     title: 'Counting Stars',
-    emoji: '⭐',
+    tag: 'STARS',
     grade: 'Grades 2–3',
     description: 'Count from 1 to 5 and print a star each time.',
     code: `# Let's count to five!
@@ -25,7 +22,7 @@ print("Done counting!")`,
   {
     id: 'countdown',
     title: 'Rocket Countdown',
-    emoji: '🚀',
+    tag: 'ROCKET',
     grade: 'Grades 2–4',
     description: 'Count down from 5, then blast off.',
     code: `# Countdown to blast off
@@ -38,7 +35,7 @@ print("Blast off!")`,
   {
     id: 'evens',
     title: 'Odd or Even',
-    emoji: '🔢',
+    tag: 'LOGIC',
     grade: 'Grades 3–5',
     description: 'Look at each number and decide if it is odd or even.',
     code: `numbers = [4, 7, 10, 3, 8]
@@ -51,7 +48,7 @@ for n in numbers:
   {
     id: 'total',
     title: 'Add Up the Scores',
-    emoji: '🏆',
+    tag: 'SCORES',
     grade: 'Grades 4–6',
     description: 'Walk through a list and keep a running total.',
     code: `scores = [10, 25, 5, 40, 15]
@@ -64,7 +61,7 @@ print("Final score:", total)`,
   {
     id: 'biggest',
     title: 'Find the Biggest',
-    emoji: '🔍',
+    tag: 'SEARCH',
     grade: 'Grades 5–7',
     description: 'Compare numbers one by one to find the largest.',
     code: `numbers = [3, 9, 2, 8, 5]
@@ -77,7 +74,7 @@ print("The biggest number is", biggest)`,
   {
     id: 'bubblesort',
     title: 'Sorting Machine',
-    emoji: '📊',
+    tag: 'SORT',
     grade: 'Grades 6–8',
     description: 'Watch bars swap places until the list is sorted small to big.',
     code: `# Bubble sort: swap neighbours until it's sorted
@@ -94,7 +91,7 @@ print("Sorted:", nums)`,
   {
     id: 'fibonacci',
     title: 'Rabbit Numbers',
-    emoji: '🐰',
+    tag: 'MATH',
     grade: 'Grades 6–8',
     description: 'Each number is the sum of the two before it (Fibonacci).',
     code: `# Fibonacci: add the last two numbers
@@ -109,7 +106,7 @@ for i in range(8):
   {
     id: 'turtle_star',
     title: 'Glowing Star',
-    emoji: '🐢',
+    tag: 'TURTLE',
     grade: 'Grades 2–6',
     description: 'Use the turtle to draw a glowing 5-point star.',
     code: `# Draw a glowing 5-pointed star!
@@ -122,7 +119,7 @@ print("Star complete!")`,
   {
     id: 'turtle_spiral',
     title: 'Rainbow Spiral',
-    emoji: '🎨',
+    tag: 'SPIRAL',
     grade: 'Grades 3–8',
     description: 'Draw a colorful expanding square spiral with turtle.',
     code: `# Draw an expanding spiral!

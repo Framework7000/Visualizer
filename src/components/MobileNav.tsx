@@ -13,7 +13,6 @@ export default function MobileNav({ activeTab, onSelectTab, hasTurtle }: Props) 
         className={`mobile-nav-btn ${activeTab === 'editor' ? 'active' : ''}`}
         onClick={() => onSelectTab('editor')}
       >
-        <span className="mobile-nav-icon">📝</span>
         <span className="mobile-nav-label">Code</span>
       </button>
 
@@ -21,7 +20,6 @@ export default function MobileNav({ activeTab, onSelectTab, hasTurtle }: Props) 
         className={`mobile-nav-btn ${activeTab === 'visualizer' ? 'active' : ''}`}
         onClick={() => onSelectTab('visualizer')}
       >
-        <span className="mobile-nav-icon">🎬</span>
         <span className="mobile-nav-label">Visualizer</span>
       </button>
 
@@ -29,7 +27,6 @@ export default function MobileNav({ activeTab, onSelectTab, hasTurtle }: Props) 
         className={`mobile-nav-btn ${activeTab === 'turtle' ? 'active' : ''} ${hasTurtle ? 'has-badge' : ''}`}
         onClick={() => onSelectTab('turtle')}
       >
-        <span className="mobile-nav-icon">🐢</span>
         <span className="mobile-nav-label">Turtle</span>
       </button>
 
@@ -37,7 +34,6 @@ export default function MobileNav({ activeTab, onSelectTab, hasTurtle }: Props) 
         className={`mobile-nav-btn ${activeTab === 'examples' ? 'active' : ''}`}
         onClick={() => onSelectTab('examples')}
       >
-        <span className="mobile-nav-icon">💡</span>
         <span className="mobile-nav-label">Examples</span>
       </button>
     </nav>
