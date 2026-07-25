@@ -106,6 +106,38 @@ for i in range(8):
     a = b
     b = next`,
   },
+  {
+    id: 'turtle_star',
+    title: 'Glowing Star',
+    emoji: '🐢',
+    grade: 'Grades 2–6',
+    description: 'Use the turtle to draw a glowing 5-point star.',
+    code: `# Draw a glowing 5-pointed star!
+color("#22d3ee")
+for i in range(5):
+    forward(80)
+    right(144)
+print("Star complete!")`,
+  },
+  {
+    id: 'turtle_spiral',
+    title: 'Rainbow Spiral',
+    emoji: '🎨',
+    grade: 'Grades 3–8',
+    description: 'Draw a colorful expanding square spiral with turtle.',
+    code: `# Draw an expanding spiral!
+size = 15
+for i in range(12):
+    if i % 3 == 0:
+        color("#22d3ee")
+    elif i % 3 == 1:
+        color("#f472b6")
+    else:
+        color("#a3e635")
+    forward(size)
+    right(90)
+    size = size + 12`,
+  },
 ]
 
 export const DEFAULT_EXAMPLE = EXAMPLES[0]

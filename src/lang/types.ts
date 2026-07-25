@@ -26,6 +26,24 @@ export interface Access {
   kind: AccessKind
 }
 
+export interface TurtleLine {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  color: string
+  width: number
+}
+
+export interface TurtleState {
+  x: number
+  y: number
+  angle: number // degrees (0 = right, 90 = up, etc)
+  penDown: boolean
+  color: string
+  lines: TurtleLine[]
+}
+
 // One "movie frame" of the running program. The player steps through these
 // like frames of a video. Each frame is a snapshot of the whole program
 // state plus a friendly note describing what just happened.
@@ -38,6 +56,7 @@ export interface Frame {
   kind: StepKind // used to pick an icon / colour for the step
   stack?: string[] // call stack of user function names (outermost → current)
   nodeId?: number // active recursion-tree node id for this step (-1 = none)
+  turtle?: TurtleState // 2D turtle graphics state snapshot
 }
 
 // A single call in the recursion tree (built from call/return trace events).

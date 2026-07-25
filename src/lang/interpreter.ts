@@ -3,7 +3,7 @@
 // number of steps and frames so a runaway loop can never freeze the browser.
 
 import { parse, ParseError, Stmt, Expr } from './parser'
-import { Access, AccessKind, Frame, isDict, RunResult, StepKind, Value } from './types'
+import { Access, AccessKind, Frame, isDict, RunResult, StepKind, TurtleLine, Value } from './types'
 
 class RuntimeError extends Error {
   line: number
@@ -28,6 +28,15 @@ class Interpreter {
   private lastCallNote = ''
   private execLine = 0 // line of the statement currently executing
 
+  // Turtle graphics state
+  private turtleX = 0
+  private turtleY = 0
+  private turtleAngle = 90 // 90 = facing up
+  private turtlePenDown = true
+  private turtleColor = '#22d3ee'
+  private turtleLines: TurtleLine[] = []
+  private usedTurtle = false
+
   run(program: Stmt[]): Frame[] {
     const firstLine = program.length > 0 ? program[0].line : 0
     this.snap(firstLine, 'Ready to run! Press play. ▶️', 'start')
@@ -46,6 +55,16 @@ class Interpreter {
       note,
       accesses: this.pending,
       kind,
+      turtle: this.usedTurtle
+        ? {
+            x: this.turtleX,
+            y: this.turtleY,
+            angle: this.turtleAngle,
+            penDown: this.turtlePenDown,
+            color: this.turtleColor,
+            lines: [...this.turtleLines],
+          }
+        : undefined,
     })
     this.pending = []
     if (this.frames.length > MAX_FRAMES) {
@@ -328,6 +347,96 @@ class Interpreter {
         return this.reduceList(expr, line, 'min')
       case 'max':
         return this.reduceList(expr, line, 'max')
+      case 'forward':
+      case 'fd': {
+        const dist = this.numeric(this.eval(this.oneArg(expr, line)), line)
+        this.usedTurtle = true
+        const rad = (this.turtleAngle * Math.PI) / 180
+        const nx = this.turtleX + dist * Math.cos(rad)
+        const ny = this.turtleY + dist * Math.sin(rad)
+        if (this.turtlePenDown) {
+          this.turtleLines.push({
+            x1: Math.round(this.turtleX * 100) / 100,
+            y1: Math.round(this.turtleY * 100) / 100,
+            x2: Math.round(nx * 100) / 100,
+            y2: Math.round(ny * 100) / 100,
+            color: this.turtleColor,
+            width: 3,
+          })
+        }
+        this.turtleX = nx
+        this.turtleY = ny
+        this.lastCallNote = `🐢 Turtle: move forward ${dist}`
+        return dist
+      }
+      case 'backward':
+      case 'bk': {
+        const dist = this.numeric(this.eval(this.oneArg(expr, line)), line)
+        this.usedTurtle = true
+        const rad = (this.turtleAngle * Math.PI) / 180
+        const nx = this.turtleX - dist * Math.cos(rad)
+        const ny = this.turtleY - dist * Math.sin(rad)
+        if (this.turtlePenDown) {
+          this.turtleLines.push({
+            x1: Math.round(this.turtleX * 100) / 100,
+            y1: Math.round(this.turtleY * 100) / 100,
+            x2: Math.round(nx * 100) / 100,
+            y2: Math.round(ny * 100) / 100,
+            color: this.turtleColor,
+            width: 3,
+          })
+        }
+        this.turtleX = nx
+        this.turtleY = ny
+        this.lastCallNote = `🐢 Turtle: move backward ${dist}`
+        return dist
+      }
+      case 'left':
+      case 'lt': {
+        const deg = this.numeric(this.eval(this.oneArg(expr, line)), line)
+        this.usedTurtle = true
+        this.turtleAngle = (this.turtleAngle + deg) % 360
+        this.lastCallNote = `🐢 Turtle: turn left ${deg}°`
+        return deg
+      }
+      case 'right':
+      case 'rt': {
+        const deg = this.numeric(this.eval(this.oneArg(expr, line)), line)
+        this.usedTurtle = true
+        this.turtleAngle = (this.turtleAngle - deg) % 360
+        this.lastCallNote = `🐢 Turtle: turn right ${deg}°`
+        return deg
+      }
+      case 'pen_up':
+      case 'penup': {
+        this.usedTurtle = true
+        this.turtlePenDown = false
+        this.lastCallNote = '🐢 Turtle: pen up 🖊️'
+        return true
+      }
+      case 'pen_down':
+      case 'pendown': {
+        this.usedTurtle = true
+        this.turtlePenDown = true
+        this.lastCallNote = '🐢 Turtle: pen down ✏️'
+        return true
+      }
+      case 'color': {
+        const c = this.eval(this.oneArg(expr, line))
+        this.usedTurtle = true
+        this.turtleColor = String(c)
+        this.lastCallNote = `🐢 Turtle: set color to ${c}`
+        return String(c)
+      }
+      case 'clear': {
+        this.usedTurtle = true
+        this.turtleLines = []
+        this.turtleX = 0
+        this.turtleY = 0
+        this.turtleAngle = 90
+        this.lastCallNote = '🐢 Turtle: canvas cleared'
+        return true
+      }
       default:
         throw new RuntimeError(`I don't know a command called "${name}".`, line)
     }

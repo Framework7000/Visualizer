@@ -4,7 +4,10 @@ import { EXAMPLES, DEFAULT_EXAMPLE } from '../lang/examples'
 import CodeEditor from '../components/CodeEditor'
 import Stage from '../components/Stage'
 import Player from '../components/Player'
+import BlockPalette from '../components/BlockPalette'
+import MobileNav, { MobileTab } from '../components/MobileNav'
 import { loadCode, saveCode } from '../lib/prefs'
+import { soundSynth } from '../lib/audio'
 
 interface Props {
   seedCode?: string
@@ -18,14 +21,15 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
+  const [mobileTab, setMobileTab] = useState<MobileTab>('editor')
+  const [showBlocks, setShowBlocks] = useState(true)
 
-  // Re-run the program whenever the code changes. Running is cheap and the
-  // interpreter is capped, so this stays responsive.
+  // Re-run the program whenever the code changes.
   const result = useMemo(() => run(code), [code])
   const frames = result.frames
   const total = frames.length
 
-  // Keep the current step inside the valid range as frames change.
+  // Keep the current step inside valid range.
   useEffect(() => {
     setIndex((i) => Math.min(i, Math.max(total - 1, 0)))
   }, [total])
@@ -33,6 +37,17 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   const clampedIndex = Math.min(index, Math.max(total - 1, 0))
   const frame = total > 0 ? frames[clampedIndex] : null
   const activeLine = playing || clampedIndex > 0 || result.error ? frame?.line ?? 0 : 0
+  const hasTurtle = frames.some((f) => Boolean(f.turtle))
+
+  // Sound synthesis trigger on step advance
+  useEffect(() => {
+    if (clampedIndex > 0) {
+      soundSynth.playStep()
+      if (clampedIndex === total - 1 && total > 1) {
+        soundSynth.playDone()
+      }
+    }
+  }, [clampedIndex, total])
 
   // Playback timer: advance frames while "playing".
   const intervalRef = useRef<number | null>(null)
@@ -53,13 +68,13 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
     }
   }, [playing, speed, total])
 
-  // Autosave the code and report it upward (for the Share button).
+  // Autosave code & report upward.
   useEffect(() => {
     saveCode('learn', code)
     reportCode(code)
   }, [code, reportCode])
 
-  // Keyboard shortcuts: space = play/pause, ← → = step (ignored while typing).
+  // Keyboard shortcuts.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return
@@ -87,11 +102,23 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
     setCode(ex.code)
     setIndex(0)
     setPlaying(false)
+    if (ex.id.startsWith('turtle_')) {
+      setMobileTab('turtle')
+    }
   }
 
   function handleCodeChange(next: string) {
     setCode(next)
-    setActiveExample('') // no longer a pristine example
+    setActiveExample('')
+    setIndex(0)
+    setPlaying(false)
+  }
+
+  function handleInsertSnippet(snippet: string) {
+    setCode((prev) => {
+      const endsWithNewline = prev.endsWith('\n') || prev.length === 0
+      return prev + (endsWithNewline ? '' : '\n') + snippet
+    })
     setIndex(0)
     setPlaying(false)
   }
@@ -109,13 +136,16 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   function handleRunFromStart() {
     setIndex(0)
     setPlaying(true)
+    if (window.innerWidth < 940) {
+      setMobileTab(hasTurtle ? 'turtle' : 'visualizer')
+    }
   }
 
   const currentExample = EXAMPLES.find((e) => e.id === activeExample)
 
   return (
     <>
-      <div className="examples mode-examples">
+      <div className={`examples mode-examples ${mobileTab === 'examples' ? 'mobile-show' : ''}`}>
         <span className="examples-label">Try one:</span>
         {EXAMPLES.map((ex) => (
           <button
@@ -131,15 +161,24 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
       </div>
 
       <div className="workspace">
-        {/* Left: code */}
-        <section className="panel">
+        {/* Left: Code Editor & Block Palette */}
+        <section className={`panel panel-editor ${mobileTab === 'editor' ? 'mobile-show' : ''}`}>
           <div className="panel-head">
             <h2>Your Code</h2>
             {currentExample && <span className="grade-tag">{currentExample.grade}</span>}
             <div className="panel-head-spacer" />
+            <button
+              className="icon-btn labeled sm"
+              onClick={() => setShowBlocks((b) => !b)}
+              title="Toggle Quick Code Blocks"
+            >
+              🧱 <span>{showBlocks ? 'Hide Blocks' : 'Show Blocks'}</span>
+            </button>
           </div>
 
           <CodeEditor code={code} onChange={handleCodeChange} activeLine={activeLine} />
+
+          {showBlocks && <BlockPalette onInsertSnippet={handleInsertSnippet} />}
 
           {result.error && (
             <p className="error-banner">
@@ -152,7 +191,7 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
           )}
 
           <div className="toolbar">
-            <button className="btn primary" onClick={handleRunFromStart} disabled={total === 0}>
+            <button className="btn primary glow" onClick={handleRunFromStart} disabled={total === 0}>
               ▶ Run &amp; Watch
             </button>
             <button className="btn ghost" onClick={() => loadExample(activeExample || DEFAULT_EXAMPLE.id)}>
@@ -161,15 +200,27 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
           </div>
         </section>
 
-        {/* Right: visualisation */}
-        <section className="panel">
+        {/* Right: Visualiser & Turtle Canvas Stage */}
+        <section
+          className={`panel panel-visualizer ${
+            mobileTab === 'visualizer' || mobileTab === 'turtle' ? 'mobile-show' : ''
+          }`}
+        >
           <div className="panel-head">
             <h2>Visualiser</h2>
-            <span className="grade-tag">live</span>
+            <span className="grade-tag live-badge">live step</span>
             <div className="panel-head-spacer" />
           </div>
 
-          <Stage frame={frame} />
+          <Stage
+            frame={frame}
+            activeStageTab={mobileTab === 'turtle' ? 'turtle' : undefined}
+            onTabChange={(tab) => {
+              if (window.innerWidth < 940) {
+                setMobileTab(tab === 'turtle' ? 'turtle' : 'visualizer')
+              }
+            }}
+          />
 
           <div style={{ padding: '0 18px 16px' }}>
             <Player
@@ -199,6 +250,12 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
           </div>
         </section>
       </div>
+
+      <MobileNav
+        activeTab={mobileTab}
+        onSelectTab={(tab) => setMobileTab(tab)}
+        hasTurtle={hasTurtle}
+      />
     </>
   )
 }

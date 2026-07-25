@@ -9,6 +9,7 @@ import {
   readSharedState,
   Theme,
 } from './lib/prefs'
+import { soundSynth } from './lib/audio'
 
 const shared = readSharedState()
 
@@ -16,6 +17,7 @@ export default function App() {
   const [mode, setMode] = useState<ModeName>(shared?.mode ?? 'learn')
   const [theme, setTheme] = useState<Theme>(getInitialTheme())
   const [toast, setToast] = useState<string | null>(null)
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
 
   // Latest code from each mode, so "Share" can capture it.
   const codes = useRef<Record<ModeName, string>>({ learn: '', python: '' })
@@ -23,6 +25,10 @@ export default function App() {
   useEffect(() => {
     applyTheme(theme)
   }, [theme])
+
+  useEffect(() => {
+    soundSynth.setEnabled(soundEnabled)
+  }, [soundEnabled])
 
   useEffect(() => {
     if (!toast) return
@@ -46,7 +52,7 @@ export default function App() {
       <div className="bg-fx" aria-hidden="true" />
       <header className="masthead">
         <div className="brand">
-          <div className="brand-badge">⬡</div>
+          <div className="brand-badge glow-badge">⬡</div>
           <div>
             <h1>Grade<span className="acc">Next</span></h1>
             <p>// watch your code execute</p>
@@ -74,6 +80,15 @@ export default function App() {
               🐍 Real Python
             </button>
           </div>
+
+          <button
+            className="icon-btn"
+            onClick={() => setSoundEnabled((s) => !s)}
+            title={soundEnabled ? 'Mute step sounds' : 'Enable step sounds'}
+            aria-label="Toggle step sound effects"
+          >
+            {soundEnabled ? '🔊' : '🔇'}
+          </button>
 
           <button className="icon-btn labeled" onClick={handleShare} title="Copy a share link">
             🔗 <span>Share</span>
