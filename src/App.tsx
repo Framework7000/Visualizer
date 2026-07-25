@@ -12,6 +12,8 @@ import {
 } from './lib/prefs'
 import { soundSynth } from './lib/audio'
 
+import GradeNextLogo from './components/Logo'
+
 const shared = readSharedState()
 
 export default function App() {
@@ -54,18 +56,7 @@ export default function App() {
     <div className="app">
       <div className="bg-fx" aria-hidden="true" />
       <header className="masthead-floating">
-        <div className="brand">
-          <div className="brand-logo-container">
-            <svg className="brand-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-            <span className="brand-g">Grade</span>
-            <span className="brand-next-badge">Next <span className="next-arrow">❯</span></span>
-            <span className="tm-badge">™</span>
-          </div>
-          <span className="brand-subtitle">// watch your code come alive</span>
-        </div>
+        <GradeNextLogo height={42} />
 
         <div className="masthead-spacer" />
 
