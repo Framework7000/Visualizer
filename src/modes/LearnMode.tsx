@@ -148,12 +148,36 @@ export default function LearnMode({
     }
   }
 
+  function handleFixError() {
+    if (!result.error) return
+    const lines = code.split('\n')
+    const lineIdx = result.errorLine ? result.errorLine - 1 : lines.length - 1
+
+    if (lineIdx >= 0 && lineIdx < lines.length) {
+      const errLine = lines[lineIdx]
+      const match = result.error.match(/stuck at "([^"]+)"/) || result.error.match(/token "([^"]+)"/)
+      
+      if (match && match[1]) {
+        const token = match[1]
+        lines[lineIdx] = errLine.replace(token, '').trimEnd()
+      } else {
+        lines[lineIdx] = errLine.replace(/[^\w\s=+\-*/()%:,"'.[\]{}#]+/g, '').trimEnd()
+        if (lines[lineIdx] === errLine) {
+          lines[lineIdx] = `# ${errLine}`
+        }
+      }
+
+      setCode(lines.join('\n'))
+      soundSynth.playDone()
+    }
+  }
+
   const currentExample = EXAMPLES.find((e) => e.id === activeExample)
 
   return (
     <>
       <div className={`examples mode-examples ${mobileTab === 'examples' ? 'mobile-show' : ''}`}>
-        <span className="examples-label">Pick an example:</span>
+        <span className="examples-label">Examples:</span>
         {EXAMPLES.map((ex) => (
           <button
             key={ex.id}
@@ -189,13 +213,23 @@ export default function LearnMode({
           {showBlocks && <BlockPalette onInsertSnippet={handleInsertSnippet} />}
 
           {result.error && (
-            <p className="error-banner">
+            <div className="error-banner">
               <span className="error-tag">ERROR</span>
-              <span>
+              <span className="error-text">
                 {result.error}
                 {result.errorLine ? ` (line ${result.errorLine})` : ''}
               </span>
-            </p>
+              <button
+                className="error-fix-btn"
+                onClick={handleFixError}
+                title="Auto-fix error line"
+                aria-label="Auto-fix error"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </button>
+            </div>
           )}
 
           <div className="toolbar">

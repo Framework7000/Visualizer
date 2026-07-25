@@ -5,7 +5,7 @@
 
 :root {
   --line-height: 24px;
-  --mono: 'JetBrains Mono', monospace;
+  --mono: 'Fira Code', 'JetBrains Mono', monospace;
   --ui: 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Official GradeNext Color Palette */
@@ -26,8 +26,8 @@
   --ink: #FFFFFF;
   --ink-secondary: #C4CDE0;
   --ink-muted: #6C7793;
-  --code-bg: #05070D;
-  --code-ink: #D8E6FF;
+  --code-bg: #1E1E1E;
+  --code-ink: #D4D4D4;
 
   --glow-primary: 0 0 25px rgba(123, 63, 152, 0.5);
   --glow-secondary: 0 0 25px rgba(142, 91, 255, 0.5);
@@ -387,29 +387,34 @@ button {
   position: relative;
 }
 
+.vscode-editor {
+  background: #1E1E1E;
+}
+
 .gutter {
   width: 44px;
   padding-top: 14px;
-  background: rgba(5, 7, 13, 0.7);
-  border-right: 1px solid var(--border-glass-strong);
+  background: #1E1E1E;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
   user-select: none;
   font-family: var(--mono);
   font-size: 13px;
-  color: #4E5875;
+  color: #858585;
   text-align: right;
   padding-right: 10px;
+  overflow: hidden;
 }
 
 .gutter-num.active {
-  color: var(--accent);
-  font-weight: 800;
-  text-shadow: var(--glow-accent);
+  color: #C6C6C6;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(72, 214, 255, 0.4);
 }
 
 .code-area {
   position: relative;
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .active-strip {
@@ -417,9 +422,8 @@ button {
   left: 0;
   right: 0;
   height: 24px;
-  background: linear-gradient(90deg, rgba(72, 214, 255, 0.22), rgba(142, 91, 255, 0.1));
-  border-left: 3.5px solid var(--accent);
-  box-shadow: 0 0 20px rgba(72, 214, 255, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid #007ACC;
   pointer-events: none;
 }
 
@@ -427,9 +431,13 @@ button {
   margin: 0;
   padding: 14px 18px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 24px;
   tab-size: 4;
+  letter-spacing: 0px;
+  word-spacing: 0px;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hl-layer {
@@ -438,6 +446,12 @@ button {
   pointer-events: none;
   color: var(--code-ink);
   white-space: pre;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.hl-layer::-webkit-scrollbar {
+  display: none;
 }
 
 .code-input {
@@ -446,9 +460,10 @@ button {
   border: none;
   background: transparent;
   color: transparent;
-  caret-color: var(--accent);
+  caret-color: #569CD6;
   resize: none;
   outline: none;
+  overflow: auto;
 }
 
 /* Syntax Token Colors (VS Code Pro Theme) */
@@ -583,6 +598,31 @@ button {
   font-size: 9.5px;
   padding: 1.5px 5px;
   border-radius: 4px;
+}
+
+.error-text {
+  flex: 1;
+}
+
+.error-fix-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 92, 122, 0.2);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.error-fix-btn:hover {
+  background: var(--danger);
+  color: #FFF;
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(255, 92, 122, 0.5);
 }
 
 /* ---------- Toolbar & Buttons ---------- */
