@@ -118,17 +118,28 @@ export default function PythonLab({ seedCode, reportCode }: Props) {
     <>
       <div className="examples mode-examples">
         <span className="examples-label">Try one:</span>
-        {PY_EXAMPLES.map((ex) => (
-          <button
-            key={ex.id}
-            className={`chip ${activeExample === ex.id ? 'active' : ''}`}
-            onClick={() => loadExample(ex.id)}
-            title={ex.tag}
-          >
-            <span>{ex.emoji}</span>
-            <span>{ex.title}</span>
-          </button>
-        ))}
+        {PY_EXAMPLES.map((ex) => {
+          const isActive = activeExample === ex.id
+          const isPlayingThis = isActive && (running || playing)
+          return (
+            <button
+              key={ex.id}
+              className={`chip ${isActive ? 'active' : ''} ${isPlayingThis ? 'playing-animated' : ''}`}
+              onClick={() => loadExample(ex.id)}
+              title={ex.tag}
+            >
+              <span className="example-tag-badge">{ex.tag}</span>
+              <span>{ex.title}</span>
+              {isPlayingThis && (
+                <span className="live-playing-indicator" title="Running execution animation">
+                  <span className="bar b1" />
+                  <span className="bar b2" />
+                  <span className="bar b3" />
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       <div className="workspace">

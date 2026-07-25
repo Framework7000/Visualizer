@@ -327,6 +327,61 @@ button {
   box-shadow: 0 0 15px rgba(142, 91, 255, 0.3);
 }
 
+/* Animated Live Running Example Chip */
+.chip.playing-animated {
+  background: linear-gradient(135deg, rgba(123, 63, 152, 0.7), rgba(142, 91, 255, 0.8), rgba(72, 214, 255, 0.7));
+  background-size: 200% 200%;
+  animation: gradientSweep 2s ease infinite, chipPulse 1.2s ease-in-out infinite alternate;
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(72, 214, 255, 0.6), 0 0 12px rgba(142, 91, 255, 0.7);
+  color: #FFF;
+}
+
+.example-tag-badge.pulse {
+  animation: badgeGlow 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes gradientSweep {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes chipPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+@keyframes badgeGlow {
+  0% { background: rgba(72, 214, 255, 0.3); color: #FFF; }
+  100% { background: rgba(142, 91, 255, 0.8); color: #FFF; }
+}
+
+/* Animated Equalizer Waveform Bars */
+.live-playing-indicator {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 12px;
+  margin-left: 4px;
+}
+
+.live-playing-indicator .bar {
+  width: 2.5px;
+  background: #FFF;
+  border-radius: 2px;
+  animation: eqBar 0.6s ease-in-out infinite alternate;
+}
+
+.live-playing-indicator .bar.b1 { height: 35%; animation-delay: 0s; }
+.live-playing-indicator .bar.b2 { height: 100%; animation-delay: 0.15s; }
+.live-playing-indicator .bar.b3 { height: 65%; animation-delay: 0.3s; }
+
+@keyframes eqBar {
+  0% { height: 25%; }
+  100% { height: 100%; }
+}
+
 /* ---------- Main Workspace Grid ---------- */
 
 .workspace {

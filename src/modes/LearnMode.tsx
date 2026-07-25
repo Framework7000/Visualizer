@@ -189,17 +189,28 @@ export default function LearnMode({
     <>
       <div className={`examples mode-examples ${mobileTab === 'examples' ? 'mobile-show' : ''}`}>
         <span className="examples-label">Examples:</span>
-        {EXAMPLES.map((ex) => (
-          <button
-            key={ex.id}
-            className={`chip ${activeExample === ex.id ? 'active' : ''}`}
-            onClick={() => loadExample(ex.id)}
-            title={ex.description}
-          >
-            <span className="example-tag-badge">{ex.tag}</span>
-            <span>{ex.title}</span>
-          </button>
-        ))}
+        {EXAMPLES.map((ex) => {
+          const isActive = activeExample === ex.id
+          const isPlayingThis = isActive && playing
+          return (
+            <button
+              key={ex.id}
+              className={`chip ${isActive ? 'active' : ''} ${isPlayingThis ? 'playing-animated' : ''}`}
+              onClick={() => loadExample(ex.id)}
+              title={ex.description}
+            >
+              <span className={`example-tag-badge ${isPlayingThis ? 'pulse' : ''}`}>{ex.tag}</span>
+              <span>{ex.title}</span>
+              {isPlayingThis && (
+                <span className="live-playing-indicator" title="Running execution animation">
+                  <span className="bar b1" />
+                  <span className="bar b2" />
+                  <span className="bar b3" />
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       <div className="workspace">
