@@ -300,6 +300,8 @@ button {
   font-size: 12.5px;
   font-weight: 600;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -311,6 +313,11 @@ button {
   border-radius: 4px;
   background: rgba(142, 91, 255, 0.14);
   color: var(--secondary);
+  z-index: 1;
+}
+
+.chip span {
+  z-index: 1;
 }
 
 .chip:hover {
@@ -327,24 +334,51 @@ button {
   box-shadow: 0 0 15px rgba(142, 91, 255, 0.3);
 }
 
-/* Animated Live Running Example Chip */
+/* Animated Live Running Example Chip with Slow Left-to-Right Beam */
 .chip.playing-animated {
-  background: linear-gradient(135deg, rgba(123, 63, 152, 0.7), rgba(142, 91, 255, 0.8), rgba(72, 214, 255, 0.7));
-  background-size: 200% 200%;
-  animation: gradientSweep 2s ease infinite, chipPulse 1.2s ease-in-out infinite alternate;
+  background: linear-gradient(90deg, rgba(123, 63, 152, 0.8), rgba(142, 91, 255, 0.9), rgba(72, 214, 255, 0.8), rgba(123, 63, 152, 0.8));
+  background-size: 250% 100%;
+  animation: moveBackground 3.5s linear infinite, chipPulse 1.2s ease-in-out infinite alternate;
   border-color: var(--accent);
   box-shadow: 0 0 20px rgba(72, 214, 255, 0.6), 0 0 12px rgba(142, 91, 255, 0.7);
   color: #FFF;
+}
+
+/* Slow Left to Right Moving Light Beam */
+.chip.playing-animated::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.85),
+    rgba(72, 214, 255, 0.9),
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: moveBeam 2.8s linear infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .example-tag-badge.pulse {
   animation: badgeGlow 0.8s ease-in-out infinite alternate;
 }
 
-@keyframes gradientSweep {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes moveBackground {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 250% 0%; }
+}
+
+@keyframes moveBeam {
+  0% { left: -120%; }
+  100% { left: 220%; }
 }
 
 @keyframes chipPulse {
