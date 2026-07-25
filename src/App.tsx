@@ -147,11 +147,27 @@ export default function App() {
         />
       )}
 
-      <p className="footer-note">
-        {mode === 'learn'
-          ? 'GradeNext Learn Mode · Step-by-step visual code execution engine for young learners (Grades 2–8)'
-          : 'GradeNext Real Python Mode · Genuine CPython (pandas, scikit-learn, matplotlib) in your browser'}
-      </p>
+      <footer className="app-footer">
+        <div className="footer-left">
+          <span className="footer-brand">GradeNext™</span>
+          <span className="footer-ver">v0.1.0</span>
+          <span className="footer-status">
+            <span className="status-dot"></span> Engine Online
+          </span>
+        </div>
+
+        <div className="footer-center">
+          {mode === 'learn'
+            ? 'Learn Mode · Step-by-step visual execution engine for Grades 2–8'
+            : 'Real Python Mode · CPython (pandas, scikit-learn, matplotlib) in browser'}
+        </div>
+
+        <div className="footer-right">
+          <span className="footer-kbd"><kbd>Space</kbd> Play/Pause</span>
+          <span className="footer-kbd"><kbd>←</kbd><kbd>→</kbd> Step</span>
+          <span className="footer-kbd"><kbd>⌘K</kbd> Commands</span>
+        </div>
+      </footer>
 
       {toast && <div className="toast">{toast}</div>}
 
