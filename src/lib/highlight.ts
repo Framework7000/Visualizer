@@ -13,6 +13,8 @@ const BUILTINS = new Set([
   'print', 'len', 'range', 'append', 'int', 'str', 'float', 'bool', 'list',
   'dict', 'set', 'tuple', 'sum', 'min', 'max', 'abs', 'enumerate', 'zip',
   'map', 'filter', 'sorted', 'reversed', 'round', 'input', 'type', 'isinstance',
+  'forward', 'fd', 'backward', 'bk', 'left', 'lt', 'right', 'rt', 'pen_up',
+  'penup', 'pen_down', 'pendown', 'color', 'clear',
 ])
 
 function esc(s: string): string {

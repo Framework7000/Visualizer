@@ -8,14 +8,21 @@ import BlockPalette from '../components/BlockPalette'
 import MobileNav, { MobileTab } from '../components/MobileNav'
 import { loadCode, saveCode } from '../lib/prefs'
 import { soundSynth } from '../lib/audio'
+import { fireConfetti } from '../lib/confetti'
 
 interface Props {
   seedCode?: string
   reportCode: (code: string) => void
+  registerRun?: (fn: () => void) => void
+  registerSelectExample?: (fn: (id: string) => void) => void
 }
 
-// "Learn" mode: the animated, step-by-step visualiser for young learners.
-export default function LearnMode({ seedCode, reportCode }: Props) {
+export default function LearnMode({
+  seedCode,
+  reportCode,
+  registerRun,
+  registerSelectExample,
+}: Props) {
   const [code, setCode] = useState(seedCode ?? loadCode('learn') ?? DEFAULT_EXAMPLE.code)
   const [activeExample, setActiveExample] = useState(DEFAULT_EXAMPLE.id)
   const [index, setIndex] = useState(0)
@@ -24,12 +31,10 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor')
   const [showBlocks, setShowBlocks] = useState(true)
 
-  // Re-run the program whenever the code changes.
   const result = useMemo(() => run(code), [code])
   const frames = result.frames
   const total = frames.length
 
-  // Keep the current step inside valid range.
   useEffect(() => {
     setIndex((i) => Math.min(i, Math.max(total - 1, 0)))
   }, [total])
@@ -39,17 +44,18 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   const activeLine = playing || clampedIndex > 0 || result.error ? frame?.line ?? 0 : 0
   const hasTurtle = frames.some((f) => Boolean(f.turtle))
 
-  // Sound synthesis trigger on step advance
+  // Sound synthesis & Confetti trigger on completion
   useEffect(() => {
     if (clampedIndex > 0) {
       soundSynth.playStep()
       if (clampedIndex === total - 1 && total > 1) {
         soundSynth.playDone()
+        fireConfetti()
       }
     }
   }, [clampedIndex, total])
 
-  // Playback timer: advance frames while "playing".
+  // Playback timer
   const intervalRef = useRef<number | null>(null)
   useEffect(() => {
     if (!playing) return
@@ -68,13 +74,17 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
     }
   }, [playing, speed, total])
 
-  // Autosave code & report upward.
   useEffect(() => {
     saveCode('learn', code)
     reportCode(code)
   }, [code, reportCode])
 
-  // Keyboard shortcuts.
+  useEffect(() => {
+    if (registerRun) registerRun(handleRunFromStart)
+    if (registerSelectExample) registerSelectExample(loadExample)
+  }, [registerRun, registerSelectExample])
+
+  // Keyboard shortcuts
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return
@@ -146,7 +156,7 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
   return (
     <>
       <div className={`examples mode-examples ${mobileTab === 'examples' ? 'mobile-show' : ''}`}>
-        <span className="examples-label">Try one:</span>
+        <span className="examples-label">Pick an example:</span>
         {EXAMPLES.map((ex) => (
           <button
             key={ex.id}
@@ -200,15 +210,15 @@ export default function LearnMode({ seedCode, reportCode }: Props) {
           </div>
         </section>
 
-        {/* Right: Visualiser & Turtle Canvas Stage */}
+        {/* Right: Visualiser Stage */}
         <section
           className={`panel panel-visualizer ${
             mobileTab === 'visualizer' || mobileTab === 'turtle' ? 'mobile-show' : ''
           }`}
         >
           <div className="panel-head">
-            <h2>Visualiser</h2>
-            <span className="grade-tag live-badge">live step</span>
+            <h2>Visualiser Stage</h2>
+            <span className="grade-tag live-badge">live execution</span>
             <div className="panel-head-spacer" />
           </div>
 

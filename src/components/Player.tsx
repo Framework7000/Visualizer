@@ -18,7 +18,6 @@ const SPEEDS = [
   { label: '4×', value: 4 },
 ]
 
-// Video-style transport: play/pause, step, restart, a scrubber, and speeds.
 export default function Player({
   index,
   total,
@@ -35,52 +34,61 @@ export default function Player({
   const atStart = index <= 0
   const atEnd = index >= lastIndex
 
+  const progressPercent = total > 1 ? (index / lastIndex) * 100 : 0
+
   return (
-    <div className="player">
-      <div className="scrubber-row">
-        <input
-          type="range"
-          className="scrubber"
-          min={0}
-          max={lastIndex}
-          value={index}
-          onChange={(e) => onSeek(Number(e.target.value))}
-          aria-label="Step through the program"
-        />
-        <span className="step-count">
-          Step {Math.min(index + 1, total)} / {total}
-        </span>
+    <div className="player-hero">
+      <div className="scrubber-container">
+        <div className="scrubber-track-wrapper">
+          <input
+            type="range"
+            className="scrubber-input"
+            min={0}
+            max={lastIndex}
+            value={index}
+            onChange={(e) => onSeek(Number(e.target.value))}
+            aria-label="Step through the program"
+            style={{
+              background: `linear-gradient(90deg, #8E5BFF 0%, #48D6FF ${progressPercent}%, rgba(255, 255, 255, 0.08) ${progressPercent}%)`,
+            }}
+          />
+        </div>
+        <div className="scrubber-labels">
+          <span className="step-badge">
+            Step {Math.min(index + 1, total)} of {total}
+          </span>
+          {atEnd && total > 1 && <span className="done-badge">🎉 Complete!</span>}
+        </div>
       </div>
 
-      <div className="transport">
-        <button className="round-btn" onClick={onRestart} disabled={atStart} title="Back to start" aria-label="Restart">
-          ⏮
-        </button>
-        <button className="round-btn" onClick={onStepBack} disabled={atStart} title="Step back" aria-label="Step back">
-          ◀
-        </button>
-        <button className="round-btn play" onClick={onPlayPause} title={playing ? 'Pause' : 'Play'} aria-label={playing ? 'Pause' : 'Play'}>
-          {playing ? '⏸' : '▶'}
-        </button>
-        <button
-          className="round-btn"
-          onClick={onStepForward}
-          disabled={atEnd}
-          title="Step forward"
-          aria-label="Step forward"
-        >
-          ▶
-        </button>
+      <div className="transport-bar">
+        <div className="transport-controls">
+          <button className="transport-btn" onClick={onRestart} disabled={atStart} title="Restart (From step 1)" aria-label="Restart">
+            ⏮
+          </button>
+          <button className="transport-btn" onClick={onStepBack} disabled={atStart} title="Step back (← key)" aria-label="Step back">
+            ◀
+          </button>
+          <button
+            className={`transport-btn play-hero-btn ${playing ? 'playing' : ''}`}
+            onClick={onPlayPause}
+            title={playing ? 'Pause (Space)' : 'Play (Space)'}
+            aria-label={playing ? 'Pause' : 'Play'}
+          >
+            {playing ? '⏸' : '▶'}
+          </button>
+          <button className="transport-btn" onClick={onStepForward} disabled={atEnd} title="Step forward (→ key)" aria-label="Step forward">
+            ▶
+          </button>
+        </div>
 
-        <div style={{ flex: 1 }} />
-
-        <div className="speed">
-          <span>Speed</span>
-          <div className="speed-buttons">
+        <div className="speed-segmented">
+          <span className="speed-label">Speed</span>
+          <div className="speed-pills">
             {SPEEDS.map((s) => (
               <button
                 key={s.value}
-                className={`speed-btn ${speed === s.value ? 'active' : ''}`}
+                className={`speed-pill ${speed === s.value ? 'active' : ''}`}
                 onClick={() => onSpeed(s.value)}
               >
                 {s.label}
