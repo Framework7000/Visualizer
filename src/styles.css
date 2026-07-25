@@ -40,15 +40,15 @@
 }
 
 :root[data-theme='light'] {
-  --bg-0: #F4F0F8;
+  --bg-0: #F3EBF8;
   --card-bg: #FFFFFF;
-  --panel-bg: #FAF8FC;
-  --border-glass: rgba(123, 63, 152, 0.12);
-  --border-glass-strong: rgba(123, 63, 152, 0.22);
-  --ink: #100818;
-  --ink-secondary: #4A3A58;
+  --panel-bg: #FAF5FC;
+  --border-glass: rgba(123, 63, 152, 0.15);
+  --border-glass-strong: rgba(123, 63, 152, 0.28);
+  --ink: #140A20;
+  --ink-secondary: #4A385A;
   --ink-muted: #847294;
-  --code-bg: #140A20;
+  --code-bg: #1A1225;
   --code-ink: #EBE4F2;
 }
 
@@ -78,6 +78,25 @@ button {
   outline: 2px solid var(--secondary);
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(142, 91, 255, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(142, 91, 255, 0.5);
 }
 
 /* ---------- Background Ambient Mesh ---------- */
@@ -332,8 +351,9 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 18px;
-  background: rgba(17, 21, 36, 0.7);
+  height: 44px;
+  padding: 0 18px;
+  background: rgba(17, 21, 36, 0.75);
   border-bottom: 1px solid var(--border-glass);
 }
 
@@ -698,6 +718,7 @@ button {
   border-radius: 5px;
   background: var(--secondary);
   color: #FFF;
+  box-shadow: 0 0 10px rgba(142, 91, 255, 0.5);
 }
 
 .narration .text {
@@ -803,8 +824,8 @@ button {
   justify-content: center;
   padding: 24px 16px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed var(--border-glass-strong);
+  background: rgba(142, 91, 255, 0.03);
+  border: 1px dashed rgba(142, 91, 255, 0.25);
   border-radius: 14px;
 }
 
