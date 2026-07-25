@@ -360,7 +360,19 @@ button {
   padding: 3px 8px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
   color: var(--ink-secondary);
+  font-family: var(--mono);
+}
+
+.lang-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(142, 91, 255, 0.16);
+  border: 1px solid rgba(142, 91, 255, 0.35);
+  color: var(--secondary);
   font-family: var(--mono);
 }
 
@@ -381,12 +393,12 @@ button {
 .gutter {
   width: 48px;
   padding-top: 14px;
-  background: rgba(7, 8, 14, 0.6);
-  border-right: 1px solid var(--border-glass);
+  background: rgba(5, 7, 13, 0.7);
+  border-right: 1px solid var(--border-glass-strong);
   user-select: none;
   font-family: var(--mono);
   font-size: 13px;
-  color: var(--ink-muted);
+  color: #4E5875;
   text-align: right;
   padding-right: 12px;
 }
@@ -394,6 +406,7 @@ button {
 .gutter-num.active {
   color: var(--accent);
   font-weight: 800;
+  text-shadow: var(--glow-accent);
 }
 
 .code-area {
@@ -407,9 +420,9 @@ button {
   left: 0;
   right: 0;
   height: 24px;
-  background: linear-gradient(90deg, rgba(72, 214, 255, 0.2), rgba(142, 91, 255, 0.15));
-  border-left: 3px solid var(--accent);
-  box-shadow: 0 0 15px rgba(72, 214, 255, 0.35);
+  background: linear-gradient(90deg, rgba(72, 214, 255, 0.22), rgba(142, 91, 255, 0.1));
+  border-left: 3.5px solid var(--accent);
+  box-shadow: 0 0 20px rgba(72, 214, 255, 0.4);
   pointer-events: none;
 }
 
@@ -441,13 +454,15 @@ button {
   outline: none;
 }
 
-/* Syntax Token Colors */
-.t-kw { color: #8E5BFF; font-weight: 700; }
-.t-str { color: #3DDC84; }
-.t-num { color: #FFC857; }
+/* Syntax Token Colors (VS Code Pro Theme) */
+.t-kw { color: #C778DD; font-weight: 700; }
+.t-bi { color: #61AFEF; font-weight: 700; }
 .t-fn { color: #48D6FF; font-weight: 700; }
-.t-bi { color: #FF5C7A; font-weight: 700; }
-.t-com { color: #7B8398; font-style: italic; }
+.t-str { color: #98C379; }
+.t-num { color: #D19A66; font-weight: 700; }
+.t-com { color: #5C6370; font-style: italic; }
+.t-op { color: #ABB2BF; }
+.t-var { color: #E5C07B; }
 
 /* ---------- Quick Block Palette ---------- */
 

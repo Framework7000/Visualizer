@@ -173,6 +173,7 @@ export default function LearnMode({
           <div className="panel-head">
             <h2>Your Code</h2>
             {currentExample && <span className="grade-tag">{currentExample.grade}</span>}
+            <span className="lang-tag">Python 3.11</span>
             <div className="panel-head-spacer" />
             <button
               className="icon-btn labeled sm"
