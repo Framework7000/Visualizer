@@ -314,7 +314,12 @@ export default function DashboardPage() {
 
             <div className="recent-list-container">
               {RECENT_ITEMS.map((item) => (
-                <div key={item.title} className="recent-challenge-card">
+                <Link
+                  key={item.title}
+                  to={item.lang === 'Web Dev' ? '/workbench' : '/visualiser'}
+                  className="recent-challenge-card clickable-card"
+                  title={`Launch ${item.title}`}
+                >
                   <div className="challenge-head">
                     <span className="challenge-title">{item.title}</span>
                     <span className="challenge-lang-tag" style={{ color: LANG_COLORS[item.lang] ?? '#8E5BFF' }}>
@@ -337,7 +342,7 @@ export default function DashboardPage() {
                       <span className="pct-badge">{item.pct}%</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
