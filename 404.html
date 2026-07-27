@@ -4,17 +4,15 @@
     <meta charset="utf-8">
     <title>GradeNext</title>
     <script type="text/javascript">
-      // Single Page Apps for GitHub Pages redirect handler
-      // Preserves clean URLs without '#' symbols on GitHub Pages static host
-      var pathSegmentsToKeep = 1;
-      var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      // Automatically redirect 404 subpaths to HashRouter path for GitHub Pages
+      var path = window.location.pathname;
+      var repo = '/Visualizer';
+      var subPath = path.startsWith(repo) ? path.substring(repo.length) : path;
+      if (subPath && subPath !== '/') {
+        window.location.replace(window.location.origin + repo + '/#' + subPath + window.location.search);
+      } else {
+        window.location.replace(window.location.origin + repo + '/#/');
+      }
     </script>
   </head>
   <body>
