@@ -136,7 +136,6 @@ export default function FilesPage() {
     return true
   })
 
-  const totalLines = files.reduce((acc, f) => acc + f.lines, 0)
   const starredCount = files.filter(f => f.starred).length
 
   return (
@@ -148,7 +147,7 @@ export default function FilesPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
             Workspace Library
           </div>
-          <h1 className="files-main-title">Projects & Saved Files</h1>
+          <h1 className="files-main-title">Projects &amp; Saved Files</h1>
           <p className="files-subtitle">Manage your Python scripts, algorithm visualisations, and workbench code snippets.</p>
         </div>
 
@@ -156,26 +155,6 @@ export default function FilesPage() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           New Project
         </button>
-      </div>
-
-      {/* Quick Statistics Strip */}
-      <div className="files-stats-strip">
-        <div className="files-stat-box">
-          <span className="stat-label">Total Projects</span>
-          <span className="stat-value">{files.length}</span>
-        </div>
-        <div className="files-stat-box">
-          <span className="stat-label">Starred Snippets</span>
-          <span className="stat-value yellow">{starredCount}</span>
-        </div>
-        <div className="files-stat-box">
-          <span className="stat-label">Lines Written</span>
-          <span className="stat-value purple">{totalLines}</span>
-        </div>
-        <div className="files-stat-box">
-          <span className="stat-label">Storage Status</span>
-          <span className="stat-value green">Local Sync</span>
-        </div>
       </div>
 
       {/* Toolbar: Search & Filter Tabs */}
