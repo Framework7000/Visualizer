@@ -21,7 +21,6 @@ const EXERCISES: Exercise[] = [
     questions: 5,
     done: 4,
     tags: ['Recursion', 'Math'],
-    codeSnippet: `# Fibonacci recursion challenge\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint("fib(6) =", fib(6))`
   },
   {
     id: 'bubble',
@@ -31,7 +30,6 @@ const EXERCISES: Exercise[] = [
     questions: 5,
     done: 5,
     tags: ['Sorting', 'Loops'],
-    codeSnippet: `# Bubble sort algorithm\ndef bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr\n\nprint(bubble_sort([64, 34, 25, 12, 22]))`
   },
   {
     id: 'binary',
@@ -41,7 +39,6 @@ const EXERCISES: Exercise[] = [
     questions: 5,
     done: 1,
     tags: ['Search', 'Divide & Conquer'],
-    codeSnippet: `# Binary search algorithm\ndef binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nprint("Found at index:", binary_search([2, 5, 8, 12, 16, 23, 38], 16))`
   },
   {
     id: 'merge',
@@ -126,10 +123,10 @@ const EXERCISES: Exercise[] = [
   },
 ]
 
-const DIFF_ACCENTS: Record<string, { color: string; bg: string }> = {
-  Easy: { color: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' },
-  Medium: { color: '#F59E0B', bg: 'rgba(245, 158, 11, 0.12)' },
-  Hard: { color: '#F43F5E', bg: 'rgba(244, 63, 94, 0.12)' }
+const DIFF_COLORS: Record<string, string> = {
+  Easy: '#10B981',
+  Medium: '#F59E0B',
+  Hard: '#F43F5E'
 }
 
 export default function ExercisesPage() {
@@ -145,7 +142,7 @@ export default function ExercisesPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
-        const inputEl = document.querySelector('.exercises-search-input.inline') as HTMLInputElement
+        const inputEl = document.querySelector('.challenges-search-input') as HTMLInputElement
         if (inputEl) inputEl.focus()
       }
     }
@@ -178,12 +175,11 @@ export default function ExercisesPage() {
   }
 
   return (
-    <div className="exercises-page-container ultra-minimal">
-      {/* Full Page Ambient Glow & Animated Tech Grid Background */}
+    <div className="challenges-page-container">
+      {/* Background Ambient Glow */}
       <div className="files-ambient-bg full-page">
         <div className="ambient-orb orb-1"></div>
         <div className="ambient-orb orb-2"></div>
-        <div className="files-animated-grid"></div>
       </div>
 
       {/* Floating Toast */}
@@ -194,40 +190,35 @@ export default function ExercisesPage() {
         </div>
       )}
 
-      {/* Header Row */}
-      <div className="files-header-title-row">
-        <h1 className="files-main-title">Coding Exercises</h1>
-        <p className="files-subtitle">Master algorithm concepts, data structures, and live web apps with interactive step-by-step challenges.</p>
+      {/* Page Title Row */}
+      <div className="challenges-header-row">
+        <h1 className="challenges-main-title">Coding Challenges</h1>
+        <p className="challenges-subtitle">Interactive programming quests and algorithmic benchmarks.</p>
       </div>
 
-      {/* Single Integrated Toolbar Row */}
-      <div className="files-unified-toolbar">
-        {/* Google-Style Pill Search Bar */}
-        <div className={`files-search-wrap inline google-style ${searchFocused ? 'focused' : ''}`}>
-          <div className="search-leading">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="search-icon">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </div>
+      {/* Unified Toolbar Row */}
+      <div className="challenges-toolbar">
+        {/* Search Input */}
+        <div className={`challenges-search-wrap ${searchFocused ? 'focused' : ''}`}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="search-icon">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input
             type="text"
-            className="files-search-input inline google-style exercises-search-input"
-            placeholder="Search exercises by title or tag (e.g. recursion, sorting)..."
+            className="challenges-search-input"
+            placeholder="Search quests or tags..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           />
-          <div className="search-trailing">
-            {search ? (
-              <button className="clear-search-btn" onClick={() => setSearch('')} title="Clear search">✕</button>
-            ) : (
-              <kbd className="search-shortcut-badge">⌘K</kbd>
-            )}
-          </div>
+          {search ? (
+            <button className="clear-search-btn" onClick={() => setSearch('')}>✕</button>
+          ) : (
+            <kbd className="search-shortcut-badge">⌘K</kbd>
+          )}
 
-          {/* Autocomplete Dropdown */}
           {searchFocused && search.trim().length > 0 && (
             <div className="google-search-dropdown">
               {filtered.length > 0 ? (
@@ -239,22 +230,22 @@ export default function ExercisesPage() {
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
                     <span className="suggestion-name">{ex.title}</span>
-                    <span className="suggestion-badge" style={{ color: DIFF_ACCENTS[ex.difficulty]?.color }}>{ex.lang} • {ex.difficulty}</span>
+                    <span className="suggestion-badge" style={{ color: DIFF_COLORS[ex.difficulty] }}>{ex.lang} • {ex.difficulty}</span>
                   </div>
                 ))
               ) : (
-                <div className="search-suggestion-empty">No matching exercises found</div>
+                <div className="search-suggestion-empty">No matching quests found</div>
               )}
             </div>
           )}
         </div>
 
-        {/* Frameless Filter Pills */}
-        <div className="files-filter-group">
+        {/* Filter Pills */}
+        <div className="challenges-filter-group">
           {(['all', 'Python', 'Web Dev', 'Java'] as const).map((l) => (
             <button
               key={l}
-              className={`unified-pill ${filter === l ? 'active' : ''}`}
+              className={`challenge-pill ${filter === l ? 'active' : ''}`}
               onClick={() => setFilter(l)}
             >
               {l === 'all' ? 'All Languages' : l}
@@ -264,7 +255,7 @@ export default function ExercisesPage() {
           {(['all', 'Easy', 'Medium', 'Hard'] as const).map((d) => (
             <button
               key={d}
-              className={`unified-pill ${diffFilter === d ? 'active' : ''}`}
+              className={`challenge-pill ${diffFilter === d ? 'active' : ''}`}
               onClick={() => setDiffFilter(d)}
             >
               {d === 'all' ? 'All Levels' : d}
@@ -273,65 +264,58 @@ export default function ExercisesPage() {
         </div>
       </div>
 
-      {/* Minimal Exercise Cards Grid */}
+      {/* Cyber Quest Challenge Cards Grid */}
       {filtered.length > 0 ? (
-        <div className="folder-grid ultra-minimal">
+        <div className="challenges-grid">
           {filtered.map((ex) => {
             const pct = Math.round((ex.done / ex.questions) * 100)
-            const accent = DIFF_ACCENTS[ex.difficulty] || { color: '#8E5BFF', bg: 'rgba(142, 91, 255, 0.12)' }
+            const diffColor = DIFF_COLORS[ex.difficulty] || '#8E5BFF'
             const isCompleted = pct === 100
 
             return (
               <div
-                className="folder-card ultra-minimal exercise-card-minimal"
+                className="challenge-cyber-card"
                 key={ex.id}
-                style={{ '--folder-accent': accent.color } as React.CSSProperties}
+                style={{ '--diff-color': diffColor } as React.CSSProperties}
               >
-                {/* Curved Folder Top Tab */}
-                <div className="folder-card-tab">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
-                  <span className="folder-tab-label">{ex.lang.toUpperCase()} • {ex.difficulty.toUpperCase()}</span>
-                </div>
+                {/* Cyber Card Top Stripe */}
+                <div className="cyber-card-top-bar" />
 
-                <div className="folder-card-header">
+                <div className="cyber-card-header">
+                  <div className="cyber-badge-wrap">
+                    <span className="cyber-lang-badge">{ex.lang}</span>
+                    <span className="cyber-diff-badge">
+                      <span className="diff-dot" />
+                      {ex.difficulty}
+                    </span>
+                  </div>
+
                   {isCompleted ? (
-                    <span className="ex-completed-badge">
-                      ✓ Completed
-                    </span>
+                    <span className="cyber-status-completed">✓ Passed</span>
                   ) : (
-                    <span className="ex-questions-count">
-                      {ex.done}/{ex.questions} Passed
-                    </span>
+                    <span className="cyber-status-count">{ex.done}/{ex.questions}</span>
                   )}
                 </div>
 
-                <div className="folder-card-body ultra-minimal">
-                  <div className="folder-icon-wrap" style={{ color: accent.color }}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                  </div>
-                  <div className="ex-title-group">
-                    <h3 className="folder-card-title">{ex.title}</h3>
-                    <div className="ex-mini-tags">
-                      {ex.tags.map((t) => (
-                        <span key={t} className="ex-tag-pill">{t}</span>
-                      ))}
-                    </div>
+                <div className="cyber-card-body">
+                  <h3 className="cyber-card-title">{ex.title}</h3>
+                  <div className="cyber-tags">
+                    {ex.tags.map((t) => (
+                      <span key={t} className="cyber-tag">{t}</span>
+                    ))}
                   </div>
                 </div>
 
-                <div className="folder-card-footer ultra-minimal">
-                  <div className="ex-card-progress-bar">
-                    <div
-                      className="ex-card-progress-fill"
-                      style={{ width: `${pct}%`, background: accent.color }}
-                    />
+                <div className="cyber-card-footer">
+                  <div className="cyber-progress-track">
+                    <div className="cyber-progress-fill" style={{ width: `${pct}%` }} />
                   </div>
+
                   <button
-                    className="folder-open-btn ultra-minimal"
-                    style={{ background: accent.color }}
+                    className="challenge-launch-btn"
                     onClick={(e) => handleLaunchExercise(ex, e)}
                   >
-                    <span>{pct === 0 ? 'Start' : pct === 100 ? 'Review' : 'Continue'} →</span>
+                    <span>{pct === 0 ? 'Start Quest' : pct === 100 ? 'Review' : 'Continue'} →</span>
                   </button>
                 </div>
               </div>
@@ -341,7 +325,7 @@ export default function ExercisesPage() {
       ) : (
         <div className="files-empty-card ultra-minimal">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <p className="empty-desc">No exercises found</p>
+          <p className="empty-desc">No quests match your filter</p>
         </div>
       )}
     </div>
