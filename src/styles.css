@@ -224,6 +224,16 @@ button {
   filter: drop-shadow(0 2px 10px rgba(124, 58, 237, 0.4));
 }
 
+.gradenext-logo-svg-vector {
+  color: var(--ink);
+  transition: filter 0.25s ease;
+  filter: drop-shadow(0 2px 10px rgba(142, 91, 255, 0.45));
+}
+
+.gradenext-official-brand:hover .gradenext-logo-svg-vector {
+  filter: drop-shadow(0 4px 18px rgba(168, 85, 247, 0.75));
+}
+
 .gradenext-official-brand:hover .gradenext-official-logo-img {
   filter: drop-shadow(0 4px 18px rgba(168, 85, 247, 0.7)) scale(1.02);
 }
