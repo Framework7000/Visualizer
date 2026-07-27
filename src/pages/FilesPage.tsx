@@ -205,10 +205,11 @@ export default function FilesPage() {
 
   return (
     <div className="files-page-container ultra-minimal" onClick={() => setColorPickerFileId(null)}>
-      {/* Full Page Ambient Glow Background */}
+      {/* Full Page Ambient Glow & Animated Tech Grid Background */}
       <div className="files-ambient-bg full-page">
         <div className="ambient-orb orb-1"></div>
         <div className="ambient-orb orb-2"></div>
+        <div className="files-animated-grid"></div>
       </div>
 
       {/* Row 1: Saved Files Title & Precise Description */}
@@ -277,7 +278,7 @@ export default function FilesPage() {
             Python
           </button>
           <button className={`unified-pill ${filter === 'starred' ? 'active' : ''}`} onClick={() => setFilter('starred')}>
-            ★ Starred ({starredCount})
+            ★ ({starredCount})
           </button>
           <button
             className="unified-pill plus-btn"
@@ -304,7 +305,6 @@ export default function FilesPage() {
                 onDragStart={(e) => handleDragStart(e, idx)}
                 onDragOver={(e) => handleDragOver(e, idx)}
                 onDragEnd={handleDragEnd}
-                onClick={() => openFile(file)}
               >
                 {/* Folder Top Tab Curve */}
                 <div className="folder-card-tab">
@@ -401,7 +401,7 @@ export default function FilesPage() {
                   <button className="folder-act-btn delete" title="Delete file" onClick={e => deleteFile(file.id, e)}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
-                  <button className="folder-open-btn ultra-minimal">
+                  <button className="folder-open-btn ultra-minimal" title="Open script" onClick={(e) => { e.stopPropagation(); openFile(file); }}>
                     Open →
                   </button>
                 </div>

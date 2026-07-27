@@ -5836,6 +5836,27 @@ button {
   100% { transform: translate(-30px, 40px) scale(0.92); }
 }
 
+/* Animated Tech Grid Overlay */
+.files-animated-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(ellipse 70% 65% at 50% 30%, #000 25%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 30%, #000 25%, transparent 100%);
+  animation: gridBreathe 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes gridBreathe {
+  0% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+  100% { opacity: 0.45; transform: scale(1); }
+}
+
 .files-header-title-row {
   position: relative;
   z-index: 1;
