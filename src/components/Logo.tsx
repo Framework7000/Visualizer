@@ -1,126 +1,92 @@
 interface LogoProps {
   height?: number
-  showSubtitle?: boolean
 }
 
-export default function GradeNextLogo({ height = 34, showSubtitle = false }: LogoProps) {
+export default function GradeNextLogo({ height = 34 }: LogoProps) {
   return (
-    <div className="gradenext-brand-container">
+    <div className="gradenext-minimal-brand" title="GradeNext">
       <svg
         height={height}
-        viewBox="0 0 232 54"
+        viewBox="0 0 220 56"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="gradenext-logo-svg"
+        className="gradenext-logo-svg-minimal"
         aria-label="GradeNext Logo"
       >
         <defs>
-          <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#9E6BFF" />
-            <stop offset="100%" stopColor="#6E3E83" />
+          <linearGradient id="gn-brand-cap" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF2A8D" />
+            <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
-          <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <linearGradient id="gn-x-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF3A9E" />
+            <stop offset="100%" stopColor="#7C4DFF" />
+          </linearGradient>
+          <filter id="gn-cap-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <filter id="gn-pink-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <filter id="gn-x-bg-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
           </filter>
         </defs>
 
-        {/* --- GRADUATION CAP OVER 'G' --- */}
-        {/* Cap Top Diamond */}
-        <path
-          d="M 26 5 L 52 14 L 26 23 L 0 14 Z"
-          fill="url(#brand-grad)"
-          filter="url(#logo-glow)"
-        />
-        {/* Cap Base */}
-        <path
-          d="M 12 18 V 24 C 12 24 18 27 26 27 C 34 27 40 24 40 24 V 18"
-          fill="#6E3E83"
-        />
-        {/* Tassel */}
-        <path
-          d="M 7 15 V 25"
-          stroke="#9E6BFF"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-        <circle cx="7" cy="26.5" r="2" fill="#48D6FF" />
+        {/* --- OFFICIAL GRADUATION CAP LOGOMARK OVER 'G' --- */}
+        <g className="logo-cap-group" transform="translate(1, -5)">
+          {/* Cap Diamond Top */}
+          <path
+            d="M 22 3 L 47 12 L 22 21 L -3 12 Z"
+            fill="url(#gn-brand-cap)"
+            filter="url(#gn-cap-glow)"
+          />
+          {/* Cap Base Ring */}
+          <path
+            d="M 8 16.5 V 21.5 C 8 21.5 15 24.5 22 24.5 C 29 24.5 36 21.5 36 21.5 V 16.5"
+            fill="url(#gn-brand-cap)"
+            opacity="0.9"
+          />
+          {/* Hanging Tassel */}
+          <g className="logo-tassel">
+            <path
+              d="M -1 13.5 V 23"
+              stroke="#FF2A8D"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            />
+            <circle cx="-1" cy="24.5" r="2.8" fill="#FF3A9E" filter="url(#gn-pink-glow)" />
+          </g>
+        </g>
 
-        {/* --- BRAND TEXT: 'Grade' --- */}
+        {/* Pink Halo Glow Box behind 'X' */}
+        <rect
+          x="152"
+          y="16"
+          width="28"
+          height="30"
+          rx="6"
+          fill="#FF3A9E"
+          opacity="0.38"
+          filter="url(#gn-x-bg-glow)"
+        />
+
+        {/* --- OFFICIAL WORDMARK (Poppins Bold) --- */}
         <text
           x="2"
-          y="48"
-          fontFamily="'Inter', system-ui, sans-serif"
-          fontWeight="900"
+          y="47"
+          fontFamily="'Poppins', sans-serif"
+          fontWeight="800"
           fontSize="35"
           fill="currentColor"
-          letterSpacing="-0.03em"
+          letterSpacing="-0.035em"
         >
-          Grade
-        </text>
-
-        {/* --- BRAND TEXT: 'Ne' --- */}
-        <text
-          x="114"
-          y="48"
-          fontFamily="'Inter', system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="33"
-          fill="currentColor"
-          letterSpacing="-0.03em"
-        >
-          Ne
-        </text>
-
-        {/* --- STYLIZED PURPLE 'X' CROSS --- */}
-        <rect
-          x="162"
-          y="18"
-          width="6.5"
-          height="30"
-          rx="3.25"
-          transform="rotate(-30 162 18)"
-          fill="url(#brand-grad)"
-          filter="url(#logo-glow)"
-        />
-        <rect
-          x="177"
-          y="20"
-          width="6.5"
-          height="30"
-          rx="3.25"
-          transform="rotate(30 177 20)"
-          fill="url(#brand-grad)"
-          filter="url(#logo-glow)"
-        />
-
-        {/* --- BRAND TEXT: 't' --- */}
-        <text
-          x="190"
-          y="48"
-          fontFamily="'Inter', system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="33"
-          fill="currentColor"
-          letterSpacing="-0.03em"
-        >
-          t
-        </text>
-
-        {/* --- TRADEMARK TM BADGE --- */}
-        <text
-          x="208"
-          y="23"
-          fontFamily="'JetBrains Mono', monospace"
-          fontWeight="800"
-          fontSize="10"
-          fill="#48D6FF"
-        >
-          TM
+          Grade<tspan fill="#5B4BFF">ne</tspan><tspan fill="url(#gn-x-gradient)">X</tspan>t
         </text>
       </svg>
-
-      {showSubtitle && <span className="brand-subtitle">// watch your code come alive</span>}
     </div>
   )
 }
+

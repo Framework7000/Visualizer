@@ -7,21 +7,21 @@ interface Props {
   activeId: number
 }
 
-const COLW = 66
+const COLW = 72
 const ROW = 64
-const NODE_H = 26
+const NODE_H = 28
 
 // Draws the recursion call tree as it grows and collapses over the run.
 export default function TreeView({ nodes, currentIndex, activeId }: Props) {
   const layout = layoutTree(nodes, currentIndex, activeId)
   if (layout.nodes.length === 0) return null
 
-  const width = layout.cols * COLW + 24
-  const height = layout.rows * ROW + 8
+  const width = layout.cols * COLW + 36
+  const height = layout.rows * ROW + 48
   const byId = new Map(layout.nodes.map((n) => [n.id, n]))
 
-  const cx = (x: number) => x * COLW + COLW / 2 + 12
-  const cy = (depth: number) => depth * ROW + NODE_H / 2 + 12
+  const cx = (x: number) => x * COLW + COLW / 2 + 18
+  const cy = (depth: number) => depth * ROW + NODE_H / 2 + 20
 
   return (
     <div className="tree-card">

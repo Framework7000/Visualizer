@@ -123,14 +123,16 @@ print("Top student:", df.loc[df["average"].idxmax(), "name"])`,
     code: `import numpy as np
 import matplotlib.pyplot as plt
 
+plt.style.use('dark_background')
 x = np.linspace(0, 2 * np.pi, 200)
 
-plt.figure(figsize=(6, 3.5))
-plt.plot(x, np.sin(x), label="sin(x)")
-plt.plot(x, np.cos(x), label="cos(x)")
-plt.title("Waves")
-plt.legend()
-plt.grid(True, alpha=0.3)
+fig, ax = plt.subplots(figsize=(5.2, 3))
+ax.plot(x, np.sin(x), label="sin(x)", color="#38BDF8", linewidth=2.5)
+ax.plot(x, np.cos(x), label="cos(x)", color="#EC4899", linewidth=2.5)
+ax.set_title("Waves", color="#FFFFFF", fontsize=11, fontweight="bold")
+ax.legend(facecolor="#111524", edgecolor="#8E5BFF")
+ax.grid(True, alpha=0.2, color="#8E5BFF")
+plt.tight_layout()
 plt.show()
 
 print("Chart ready! 📊")`,
@@ -175,7 +177,7 @@ model.fit(X_train, y_train)
 
 # Predict and evaluate
 y_pred = model.predict(X_test)
-print("\\nAccuracy:", round(accuracy_score(y_test, y_pred), 3))
+print("\nAccuracy:", round(accuracy_score(y_test, y_pred), 3))
 print(classification_report(y_test, y_pred))`,
   },
   {
@@ -190,6 +192,7 @@ from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
+plt.style.use('dark_background')
 wine = load_wine()
 X_train, X_test, y_train, y_test = train_test_split(
     wine.data, wine.target, test_size=0.2, random_state=42
@@ -202,9 +205,10 @@ print("Accuracy:", round(model.score(X_test, y_test), 3))
 # Plot the most important features
 importances = model.feature_importances_
 order = np.argsort(importances)[-6:]
-plt.figure(figsize=(6, 3.5))
-plt.barh([wine.feature_names[i] for i in order], importances[order], color="#6366f1")
-plt.title("Top features for telling wines apart")
+fig, ax = plt.subplots(figsize=(5.2, 3))
+ax.barh([wine.feature_names[i] for i in order], importances[order], color="#8E5BFF")
+ax.set_title("Top features for telling wines apart", color="#FFFFFF", fontsize=11, fontweight="bold")
+ax.grid(True, alpha=0.15)
 plt.tight_layout()
 plt.show()`,
   },

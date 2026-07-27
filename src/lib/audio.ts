@@ -89,3 +89,134 @@ class SoundSynth {
 }
 
 export const soundSynth = new SoundSynth()
+
+// Warm, Pleasant US American Male Teacher Voice Selector
+function getWarmMaleTeacherVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null
+
+  const voices = window.speechSynthesis.getVoices()
+  if (!voices || voices.length === 0) return null
+
+  // Priority list for natural human US Male teacher voices
+  const usMaleNames = [
+    'Google US English',
+    'Alex',
+    'Guy',
+    'Aaron',
+    'Matthew',
+    'Justin',
+    'Joey',
+    'Christopher',
+    'Daniel',
+    'Tom',
+    'David',
+  ]
+
+  for (const name of usMaleNames) {
+    const found = voices.find(
+      (v) => (v.name.includes(name) || v.name.toLowerCase().includes(name.toLowerCase())) && v.lang.startsWith('en')
+    )
+    if (found) return found
+  }
+
+  const usMale = voices.find(
+    (v) => (v.lang === 'en-US' || v.lang === 'en_US') && !v.name.toLowerCase().includes('female')
+  )
+  if (usMale) return usMale
+
+  return voices.find((v) => v.lang.startsWith('en')) || voices[0] || null
+}
+
+// Warm, Pleasant US American Female Teacher Voice Selector (Strict en-US)
+function getWarmAmericanTeacherVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null
+
+  const voices = window.speechSynthesis.getVoices()
+  if (!voices || voices.length === 0) return null
+
+  // Priority US American Female Teacher Voices
+  const usFemaleNames = [
+    'Samantha',
+    'Google US English',
+    'Jenny',
+    'Aria',
+    'Karen',
+    'Zira',
+    'Ava',
+    'Allison',
+    'Susan',
+    'Siri',
+  ]
+
+  // 1. Try exact matches for US Female voices
+  for (const name of usFemaleNames) {
+    const found = voices.find(
+      (v) => (v.name.includes(name) || v.name.toLowerCase().includes(name.toLowerCase())) && (v.lang.startsWith('en'))
+    )
+    if (found) return found
+  }
+
+  // 2. Try any voice explicitly tagged en-US or en_US
+  const usVoice = voices.find((v) => (v.lang === 'en-US' || v.lang === 'en_US') && !v.name.toLowerCase().includes('male'))
+  if (usVoice) return usVoice
+
+  // 3. Fallback to any English voice
+  const englishVoice = voices.find((v) => v.lang.startsWith('en'))
+  return englishVoice || voices[0] || null
+}
+
+// Browser Speech Synthesis (Text-to-Speech) supporting Female & Male Teacher Voices
+export function speakText(
+  text: string,
+  rate: number = 0.5,
+  gender: 'female' | 'male' = 'female',
+  onEnd?: () => void
+): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    if (onEnd) onEnd()
+    return
+  }
+
+  try {
+    window.speechSynthesis.cancel() // Stop previous speech
+    const cleanText = text
+      .replace(/["']/g, '')
+      .replace(/=/g, ' equals ')
+      .replace(/!=/g, ' is not equal to ')
+      .replace(/==/g, ' is equal to ')
+      .replace(/>/g, ' is greater than ')
+      .replace(/</g, ' is less than ')
+
+    const utterance = new SpeechSynthesisUtterance(cleanText)
+    utterance.lang = 'en-US' // Explicitly enforce US American English
+    utterance.rate = Math.max(0.65, Math.min(rate, 0.95)) // Calm, patient teacher pace
+    utterance.volume = 0.95 // Clear articulation
+
+    if (gender === 'male') {
+      utterance.pitch = 1.0 // Natural, warm conversational male pitch
+      const maleVoice = getWarmMaleTeacherVoice()
+      if (maleVoice) utterance.voice = maleVoice
+    } else {
+      utterance.pitch = 1.05 // Reassuring, approachable female pitch
+      const femaleVoice = getWarmAmericanTeacherVoice()
+      if (femaleVoice) utterance.voice = femaleVoice
+    }
+
+    if (onEnd) {
+      utterance.onend = onEnd
+      utterance.onerror = onEnd
+    }
+
+    window.speechSynthesis.speak(utterance)
+  } catch {
+    if (onEnd) onEnd()
+  }
+}
+
+export function stopSpeech(): void {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel()
+    } catch {}
+  }
+}

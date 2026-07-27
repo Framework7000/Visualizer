@@ -257,7 +257,7 @@ try:
     for _n in _plt.get_fignums():
         _fig = _plt.figure(_n)
         _buf2 = _io.BytesIO()
-        _fig.savefig(_buf2, format='png', bbox_inches='tight', dpi=110)
+        _fig.savefig(_buf2, format='png', bbox_inches='tight', transparent=True, dpi=130)
         _imgs.append(_b64.b64encode(_buf2.getvalue()).decode())
     _plt.close('all')
 except Exception:

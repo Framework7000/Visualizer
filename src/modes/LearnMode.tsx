@@ -29,8 +29,14 @@ export default function LearnMode({
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
+  const [voiceGender, setVoiceGender] = useState<'female' | 'male'>('female')
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor')
   const [showBlocks, setShowBlocks] = useState(true)
+
+  function handleToggleVoiceGender() {
+    setVoiceGender((g) => (g === 'female' ? 'male' : 'female'))
+  }
 
   const result = useMemo(() => run(code), [code])
   const frames = result.frames
@@ -151,12 +157,17 @@ export default function LearnMode({
     }
   }
 
+  const visualizerSectionRef = useRef<HTMLDivElement>(null)
+
   function handleRunFromStart() {
     setIndex(0)
     setPlaying(true)
     if (window.innerWidth < 940) {
       setMobileTab(hasTurtle ? 'turtle' : 'visualizer')
     }
+    setTimeout(() => {
+      visualizerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
   }
 
   function handleFixError() {
@@ -183,136 +194,144 @@ export default function LearnMode({
     }
   }
 
-  const currentExample = EXAMPLES.find((e) => e.id === (activeExample || lastSelectedExampleRef.current))
-
   return (
     <>
-      <div className={`examples mode-examples ${mobileTab === 'examples' ? 'mobile-show' : ''}`}>
-        <span className="examples-label">Examples:</span>
-        {EXAMPLES.map((ex) => {
-          const isActive = activeExample === ex.id
-          const isPlayingThis = isActive && playing
-          return (
-            <button
-              key={ex.id}
-              className={`chip ${isActive ? 'active' : ''} ${isPlayingThis ? 'playing-animated' : ''}`}
-              onClick={() => loadExample(ex.id)}
-              title={ex.description}
-            >
-              <span className={`example-tag-badge ${isPlayingThis ? 'pulse' : ''}`}>{ex.tag}</span>
-              <span>{ex.title}</span>
-              {isPlayingThis && (
-                <span className="live-playing-indicator" title="Running execution animation">
-                  <span className="bar b1" />
-                  <span className="bar b2" />
-                  <span className="bar b3" />
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="workspace">
-        {/* Left: Code Editor & Block Palette */}
-        <section className={`panel panel-editor ${mobileTab === 'editor' ? 'mobile-show' : ''}`}>
-          <div className="panel-head">
-            <h2>Your Code</h2>
-            {currentExample && <span className="grade-tag">{currentExample.grade}</span>}
-            <span className="lang-tag">Python 3.11</span>
-            <div className="panel-head-spacer" />
-            <button
-              className="blocks-toggle-btn"
-              onClick={() => setShowBlocks((b) => !b)}
-              title="Toggle Quick Code Blocks"
-            >
-              <span>{showBlocks ? 'Hide Blocks' : 'Show Blocks'}</span>
-            </button>
+      <div className="unified-full-browser-window">
+        {/* 1. CONTINUOUS CHROME / SAFARI TAB BAR ACROSS 100% FULL WIDTH AT TOP */}
+        <div className="chrome-tab-header full-width-tabbar">
+          <div className="chrome-tabs-list" role="tablist">
+            {EXAMPLES.map((ex) => {
+              const isActive = activeExample === ex.id
+              const isPlayingThis = isActive && playing
+              return (
+                <button
+                  key={ex.id}
+                  className={`chrome-tab ${isActive ? 'active' : ''}`}
+                  onClick={() => loadExample(ex.id)}
+                  title={ex.description}
+                  role="tab"
+                  aria-selected={isActive}
+                >
+                  <span className="chrome-tab-icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                  </span>
+                  <span className="chrome-tab-title">{ex.title}</span>
+                  {isPlayingThis && (
+                    <span className="live-playing-dot" title="Running execution animation" />
+                  )}
+                </button>
+              )
+            })}
           </div>
+        </div>
 
-          <CodeEditor code={code} onChange={handleCodeChange} activeLine={activeLine} />
-
-          {showBlocks && <BlockPalette onInsertSnippet={handleInsertSnippet} />}
-
-          {result.error && (
-            <div className="error-banner">
-              <span className="error-tag">ERROR</span>
-              <span className="error-text">
-                {result.error}
-                {result.errorLine ? ` (line ${result.errorLine})` : ''}
-              </span>
+        {/* 2. COMBINED 50-50 WORKSPACE BODY INSIDE SINGLE WINDOW */}
+        <div className="unified-window-body">
+          {/* Left Column: Code Editor */}
+          <section className={`panel panel-editor ${mobileTab === 'editor' ? 'mobile-show' : ''}`}>
+            <div className="editor-subhead-bar">
+              <span className="editor-label-title">Your Code</span>
+              <span className="lang-text-clean">Python 3.11</span>
+              <div className="panel-head-spacer" />
               <button
-                className="error-fix-btn"
-                onClick={handleFixError}
-                title="Auto-fix error line"
-                aria-label="Auto-fix error"
+                className="blocks-toggle-btn icon-btn"
+                onClick={() => setShowBlocks((b) => !b)}
+                title={showBlocks ? 'Hide Blocks' : 'Show Blocks'}
+                aria-label={showBlocks ? 'Hide Blocks' : 'Show Blocks'}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
+                {showBlocks ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                )}
               </button>
             </div>
-          )}
 
-          <div className="toolbar">
-            <button className="btn primary glow" onClick={handleRunFromStart} disabled={total === 0}>
-              Run &amp; Watch
-            </button>
-            <button className="btn ghost" onClick={handleResetExample}>
-              Reset example
-            </button>
-          </div>
-        </section>
+            <CodeEditor code={code} onChange={handleCodeChange} activeLine={activeLine} />
 
-        {/* Right: Visualiser Stage */}
-        <section
-          className={`panel panel-visualizer ${
-            mobileTab === 'visualizer' || mobileTab === 'turtle' ? 'mobile-show' : ''
-          }`}
-        >
-          <div className="panel-head">
-            <h2>Visualiser Stage</h2>
-            <span className="grade-tag live-badge">live execution</span>
-            <div className="panel-head-spacer" />
-          </div>
+            {showBlocks && <BlockPalette onInsertSnippet={handleInsertSnippet} />}
 
-          <Stage
-            frame={frame}
-            activeStageTab={mobileTab === 'turtle' ? 'turtle' : undefined}
-            onTabChange={(tab) => {
-              if (window.innerWidth < 940) {
-                setMobileTab(tab === 'turtle' ? 'turtle' : 'visualizer')
-              }
-            }}
-          />
+            {result.error && (
+              <div className="error-banner">
+                <span className="error-tag">ERROR</span>
+                <span className="error-text">
+                  {result.error}
+                  {result.errorLine ? ` (line ${result.errorLine})` : ''}
+                </span>
+                <button
+                  className="error-fix-btn"
+                  onClick={handleFixError}
+                  title="Auto-fix error line"
+                  aria-label="Auto-fix error"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </button>
+              </div>
+            )}
 
-          <div style={{ padding: '0 18px 16px' }}>
-            <Player
-              index={clampedIndex}
-              total={total}
-              playing={playing}
+            <div className="toolbar">
+              <button className="btn primary glow" onClick={handleRunFromStart} disabled={total === 0}>
+                Run &amp; Watch
+              </button>
+              <button className="btn ghost" onClick={handleResetExample}>
+                Reset example
+              </button>
+            </div>
+          </section>
+
+          {/* Right Column: Visualiser Stage */}
+          <section
+            ref={visualizerSectionRef}
+            className={`panel panel-visualizer ${
+              mobileTab === 'visualizer' || mobileTab === 'turtle' ? 'mobile-show' : ''
+            }`}
+          >
+            <Stage
+              frame={frame}
               speed={speed}
-              onPlayPause={handlePlayPause}
-              onSeek={(i) => {
-                setPlaying(false)
-                setIndex(i)
+              playing={playing}
+              voiceEnabled={voiceEnabled}
+              voiceGender={voiceGender}
+              onToggleVoice={() => setVoiceEnabled((v) => !v)}
+              activeStageTab={mobileTab === 'turtle' ? 'turtle' : undefined}
+              onTabChange={(tab) => {
+                if (window.innerWidth < 940) {
+                  setMobileTab(tab === 'turtle' ? 'turtle' : 'visualizer')
+                }
               }}
-              onStepBack={() => {
-                setPlaying(false)
-                setIndex((i) => Math.max(0, i - 1))
-              }}
-              onStepForward={() => {
-                setPlaying(false)
-                setIndex((i) => Math.min(total - 1, i + 1))
-              }}
-              onRestart={() => {
-                setPlaying(false)
-                setIndex(0)
-              }}
-              onSpeed={setSpeed}
             />
-          </div>
-        </section>
+
+            <div style={{ padding: '0 18px 16px' }}>
+              <Player
+                index={clampedIndex}
+                total={total}
+                playing={playing}
+                speed={speed}
+                voiceEnabled={voiceEnabled}
+                onToggleVoice={() => setVoiceEnabled((v) => !v)}
+                voiceGender={voiceGender}
+                onToggleVoiceGender={handleToggleVoiceGender}
+                onPlayPause={handlePlayPause}
+                onSeek={setIndex}
+                onStepBack={() => setIndex((i) => Math.max(i - 1, 0))}
+                onStepForward={() => setIndex((i) => Math.min(i + 1, total - 1))}
+                onRestart={() => setIndex(0)}
+                onSpeed={setSpeed}
+              />
+            </div>
+          </section>
+        </div>
       </div>
 
       <MobileNav

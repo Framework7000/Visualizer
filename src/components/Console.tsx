@@ -41,7 +41,7 @@ export default function Console({ lines }: Props) {
       <div className="console-body" ref={bodyRef}>
         {lines.length === 0 ? (
           <div className="console-empty">
-            <span>Terminal output screen ready. Anything you <code>print(...)</code> appears here live.</span>
+            <span>Terminal ready</span>
           </div>
         ) : (
           <AnimatePresence initial={false}>
