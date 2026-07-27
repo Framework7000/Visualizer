@@ -114,51 +114,24 @@ export default function FilesPage() {
 
   return (
     <div className="files-page-container ultra-minimal">
-      {/* Ambient Floating Glow Animation Background */}
-      <div className="files-ambient-bg">
+      {/* Full Page Ambient Glow Background */}
+      <div className="files-ambient-bg full-page">
         <div className="ambient-orb orb-1"></div>
         <div className="ambient-orb orb-2"></div>
       </div>
 
-      {/* Top Header Row: Files Title on Left, Frameless Filter Pills + Plus Button on Right */}
-      <div className="files-header-row ultra-minimal">
+      {/* Row 1: Files Title */}
+      <div className="files-header-title-row">
         <h1 className="files-main-title">Files</h1>
-
-        <div className="files-header-actions">
-          {/* Frameless Filter Pills */}
-          <div className="files-filter-pills frameless">
-            <button className={`filter-pill ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
-              All ({files.length})
-            </button>
-            <button className={`filter-pill ${filter === 'learn' ? 'active' : ''}`} onClick={() => setFilter('learn')}>
-              Learn
-            </button>
-            <button className={`filter-pill ${filter === 'python' ? 'active' : ''}`} onClick={() => setFilter('python')}>
-              Python
-            </button>
-            <button className={`filter-pill ${filter === 'starred' ? 'active' : ''}`} onClick={() => setFilter('starred')}>
-              ★ Starred ({starredCount})
-            </button>
-          </div>
-
-          {/* Plus Icon Button in same row */}
-          <button
-            className="files-create-btn icon-only"
-            onClick={() => setNewModalOpen(true)}
-            title="New File"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </button>
-        </div>
       </div>
 
-      {/* Long Search Bar Row */}
-      <div className="files-search-row">
-        <div className="files-search-wrap long">
+      {/* Row 2: ONE SINGLE INTEGRATED ROW - Search Input on Left, Filter Pills + Plus Button on Right */}
+      <div className="files-unified-toolbar">
+        <div className="files-search-wrap inline">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input
             type="text"
-            className="files-search-input long"
+            className="files-search-input inline"
             placeholder="Search files..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -166,6 +139,29 @@ export default function FilesPage() {
           {search && (
             <button className="clear-search-btn" onClick={() => setSearch('')}>✕</button>
           )}
+        </div>
+
+        {/* Filter Pills + Plus Button in exact same row with unified styling */}
+        <div className="files-filter-group">
+          <button className={`unified-pill ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
+            All ({files.length})
+          </button>
+          <button className={`unified-pill ${filter === 'learn' ? 'active' : ''}`} onClick={() => setFilter('learn')}>
+            Learn
+          </button>
+          <button className={`unified-pill ${filter === 'python' ? 'active' : ''}`} onClick={() => setFilter('python')}>
+            Python
+          </button>
+          <button className={`unified-pill ${filter === 'starred' ? 'active' : ''}`} onClick={() => setFilter('starred')}>
+            ★ Starred ({starredCount})
+          </button>
+          <button
+            className="unified-pill plus-btn"
+            onClick={() => setNewModalOpen(true)}
+            title="New File"
+          >
+            +
+          </button>
         </div>
       </div>
 
