@@ -71,6 +71,7 @@ export default function FilesPage() {
   })
 
   const [search, setSearch] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [filter, setFilter] = useState<'all' | 'python' | 'learn' | 'starred'>('all')
   const [newModalOpen, setNewModalOpen] = useState(false)
   const [newFileName, setNewFileName] = useState('')
@@ -88,6 +89,19 @@ export default function FilesPage() {
   useEffect(() => {
     localStorage.setItem('gradenext_user_files', JSON.stringify(files))
   }, [files])
+
+  // Global shortcut (Cmd+K / Ctrl+K) to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        const inputEl = document.querySelector('.files-search-input.inline') as HTMLInputElement
+        if (inputEl) inputEl.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const toggleStar = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -203,19 +217,51 @@ export default function FilesPage() {
         <p className="files-subtitle">Manage, edit, and launch your saved Python scripts and algorithm visualisations.</p>
       </div>
 
-      {/* Row 2: ONE SINGLE INTEGRATED ROW - Search Input on Left, Filter Pills + Plus Button on Right */}
+      {/* Row 2: ONE SINGLE INTEGRATED ROW - Google Style Search Bar on Left, Filter Pills + Plus Button on Right */}
       <div className="files-unified-toolbar">
-        <div className="files-search-wrap inline">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div className={`files-search-wrap inline google-style ${searchFocused ? 'focused' : ''}`}>
+          <div className="search-leading">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="search-icon">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
           <input
             type="text"
-            className="files-search-input inline"
-            placeholder="Search files..."
+            className="files-search-input inline google-style"
+            placeholder="Search scripts, algorithms or files..."
             value={search}
             onChange={e => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           />
-          {search && (
-            <button className="clear-search-btn" onClick={() => setSearch('')}>✕</button>
+          <div className="search-trailing">
+            {search ? (
+              <button className="clear-search-btn" onClick={() => setSearch('')} title="Clear search">✕</button>
+            ) : (
+              <kbd className="search-shortcut-badge">⌘K</kbd>
+            )}
+          </div>
+
+          {/* Google-style Autocomplete Suggestion Dropdown */}
+          {searchFocused && search.trim().length > 0 && (
+            <div className="google-search-dropdown">
+              {filteredFiles.length > 0 ? (
+                filteredFiles.map(file => (
+                  <div
+                    key={file.id}
+                    className="search-suggestion-item"
+                    onMouseDown={() => openFile(file)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    <span className="suggestion-name">{file.name}</span>
+                    <span className="suggestion-badge">{file.language === 'python' ? 'Python 3.11' : 'Learn Mode'}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="search-suggestion-empty">No matching files found</div>
+              )}
+            </div>
           )}
         </div>
 
