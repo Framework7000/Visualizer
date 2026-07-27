@@ -60,19 +60,19 @@
   --bg-0: #F8FAFC;
   --card-bg: #FFFFFF;
   --panel-bg: #F1F5F9;
-  --border-glass: rgba(107, 76, 255, 0.16);
-  --border-glass-strong: rgba(107, 76, 255, 0.3);
+  --border-glass: rgba(142, 91, 255, 0.18);
+  --border-glass-strong: rgba(142, 91, 255, 0.32);
   --ink: #0F172A;
   --ink-secondary: #334155;
   --ink-muted: #64748B;
-  --code-bg: #F8FAFC;
+  --code-bg: #FFFFFF;
   --code-ink: #0F172A;
 
-  --glow-primary: 0 4px 20px rgba(107, 76, 255, 0.15);
-  --glow-secondary: 0 4px 20px rgba(139, 114, 255, 0.15);
-  --glow-accent: 0 4px 20px rgba(56, 189, 248, 0.15);
-  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 10px 30px rgba(15, 23, 42, 0.1);
+  --glow-primary: 0 4px 20px rgba(107, 76, 255, 0.12);
+  --glow-secondary: 0 4px 20px rgba(139, 114, 255, 0.12);
+  --glow-accent: 0 4px 20px rgba(56, 189, 248, 0.12);
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.05), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 12px 36px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -3295,16 +3295,26 @@ button {
 :root[data-theme='light'] .panel,
 :root[data-theme='light'] .app-footer,
 :root[data-theme='light'] .portal-topbar {
-  background: #F7F4FD;
-  border-color: rgba(123, 63, 152, 0.28);
-  box-shadow: 0 10px 30px rgba(99, 58, 126, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03);
+  background: #FFFFFF;
+  border-color: rgba(142, 91, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+}
+
+:root[data-theme='light'] .topbar-nav-link {
+  color: #475569;
+}
+
+:root[data-theme='light'] .topbar-nav-link:hover,
+:root[data-theme='light'] .topbar-nav-link.active {
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.08);
 }
 
 :root[data-theme='light'] .topbar-streak-pill,
 :root[data-theme='light'] .topbar-icon-btn,
 :root[data-theme='light'] .topbar-right-btn {
   background: rgba(142, 91, 255, 0.08);
-  border-color: rgba(142, 91, 255, 0.25);
+  border-color: rgba(142, 91, 255, 0.22);
   color: #334155;
 }
 
@@ -3313,11 +3323,122 @@ button {
   color: #0F172A;
 }
 
+/* Light Mode Dashboard & Cards */
+:root[data-theme='light'] .dash-card-section,
+:root[data-theme='light'] .metric-card,
+:root[data-theme='light'] .chart-container-card,
+:root[data-theme='light'] .workspace-tile {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(142, 91, 255, 0.2) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+:root[data-theme='light'] .metric-num,
+:root[data-theme='light'] .section-header h2,
+:root[data-theme='light'] .tile-title,
+:root[data-theme='light'] .challenge-title,
+:root[data-theme='light'] .insight-number,
+:root[data-theme='light'] .xaxis-day {
+  color: #0F172A !important;
+}
+
+:root[data-theme='light'] .metric-bottom-lbl,
+:root[data-theme='light'] .section-header p,
+:root[data-theme='light'] .tile-desc,
+:root[data-theme='light'] .insight-label,
+:root[data-theme='light'] .xaxis-mins {
+  color: #475569 !important;
+}
+
+:root[data-theme='light'] .recent-challenge-card {
+  background: #F8FAFC;
+  border: 1px solid rgba(142, 91, 255, 0.18);
+}
+
+:root[data-theme='light'] .recent-challenge-card:hover {
+  background: #F1F5F9;
+  border-color: #8E5BFF;
+}
+
+/* Light Mode Exercises & Files Cards */
+:root[data-theme='light'] .challenge-cyber-card,
+:root[data-theme='light'] .folder-card.ultra-minimal {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(142, 91, 255, 0.22) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+}
+
+:root[data-theme='light'] .challenge-cyber-title,
+:root[data-theme='light'] .folder-title.ultra-minimal {
+  color: #0F172A !important;
+}
+
+:root[data-theme='light'] .challenge-cyber-desc,
+:root[data-theme='light'] .folder-desc.ultra-minimal {
+  color: #475569 !important;
+}
+
+:root[data-theme='light'] .folder-open-btn.ultra-minimal {
+  background: #F1F5F9 !important;
+  color: #7C3AED !important;
+  border: 1px solid rgba(124, 58, 237, 0.25) !important;
+}
+
+:root[data-theme='light'] .files-search-input.inline.google-style,
+:root[data-theme='light'] .exercise-search-input {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid rgba(142, 91, 255, 0.25) !important;
+}
+
+/* Light Mode Whiteboard */
+:root[data-theme='light'] .whiteboard-page {
+  background: #F8FAFC;
+}
+
+:root[data-theme='light'] .wb-toolbar,
+:root[data-theme='light'] .wb-zoom-controls,
+:root[data-theme='light'] .wb-shortcuts-card,
+:root[data-theme='light'] .wb-drag-modal {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(142, 91, 255, 0.25) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1) !important;
+  color: #0F172A !important;
+}
+
+:root[data-theme='light'] .wb-tool-btn,
+:root[data-theme='light'] .wb-zoom-btn {
+  color: #334155;
+}
+
+:root[data-theme='light'] .wb-tool-btn:hover,
+:root[data-theme='light'] .wb-zoom-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+:root[data-theme='light'] .wb-tool-btn.active {
+  background: rgba(142, 91, 255, 0.16);
+  color: #7C3AED;
+}
+
+:root[data-theme='light'] .wb-shortcut-key {
+  background: #F1F5F9;
+  color: #0F172A;
+  border-color: rgba(142, 91, 255, 0.25);
+}
+
+:root[data-theme='light'] .wb-doc-bar {
+  background: #F1F5F9;
+  color: #0F172A;
+  border-bottom: 1px solid rgba(142, 91, 255, 0.2);
+}
+
 :root[data-theme='light'] .chrome-tabstrip-container,
 :root[data-theme='light'] .examples {
-  background: #EFE9F8;
-  border-color: rgba(123, 63, 152, 0.25);
-  box-shadow: 0 4px 14px rgba(123, 63, 152, 0.08);
+  background: #F1F5F9;
+  border-color: rgba(142, 91, 255, 0.22);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
 
 :root[data-theme='light'] .chrome-top-tab {
@@ -3336,18 +3457,18 @@ button {
 
 :root[data-theme='light'] .panel-head,
 :root[data-theme='light'] .toolbar {
-  background: #EFE9F8;
-  border-color: rgba(123, 63, 152, 0.2);
+  background: #F1F5F9;
+  border-color: rgba(142, 91, 255, 0.2);
 }
 
 :root[data-theme='light'] .chip {
-  background: #F7F4FD;
+  background: #FFFFFF;
   color: #1E293B;
-  border-color: rgba(123, 63, 152, 0.22);
+  border-color: rgba(142, 91, 255, 0.22);
 }
 
 :root[data-theme='light'] .chip:hover:not(.active) {
-  background: #E4DCF2;
+  background: #F1F5F9;
   color: #0F172A;
   border-color: var(--secondary);
 }
@@ -3358,9 +3479,9 @@ button {
 }
 
 :root[data-theme='light'] .example-tag-badge {
-  background: rgba(123, 63, 152, 0.16);
+  background: rgba(123, 63, 152, 0.12);
   color: #7B3F98;
-  border-color: rgba(123, 63, 152, 0.3);
+  border-color: rgba(123, 63, 152, 0.25);
 }
 
 :root[data-theme='light'] .chip.active .example-tag-badge,
@@ -3372,13 +3493,13 @@ button {
 
 :root[data-theme='light'] .mode-toggle-pills,
 :root[data-theme='light'] .speed-pills {
-  background: #E4DCF2;
-  border-color: rgba(123, 63, 152, 0.25);
+  background: #F1F5F9;
+  border-color: rgba(142, 91, 255, 0.22);
 }
 
 :root[data-theme='light'] .mode-pill,
 :root[data-theme='light'] .speed-pill {
-  color: #43325B;
+  color: #475569;
 }
 
 :root[data-theme='light'] .mode-pill.active,
@@ -3390,18 +3511,18 @@ button {
 
 :root[data-theme='light'] .vscode-editor,
 :root[data-theme='light'] .gutter {
-  background: #F3EEFA;
-  color: #1C0F35;
+  background: #FFFFFF;
+  color: #0F172A;
 }
 
 :root[data-theme='light'] .console-window {
-  background: #F8FAFC;
-  border-color: rgba(123, 63, 152, 0.25);
+  background: #FFFFFF;
+  border-color: rgba(142, 91, 255, 0.22);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 :root[data-theme='light'] .console-bar {
-  background: #EFE9F8;
+  background: #F1F5F9;
 }
 
 :root[data-theme='light'] .console-body {
@@ -3414,23 +3535,23 @@ button {
 }
 
 :root[data-theme='light'] .bars {
-  background: #E4DCF2;
-  border-color: rgba(123, 63, 152, 0.2);
+  background: #F8FAFC;
+  border-color: rgba(142, 91, 255, 0.2);
 }
 
 :root[data-theme='light'] .array-card,
 :root[data-theme='light'] .dict-card,
 :root[data-theme='light'] .tree-card,
 :root[data-theme='light'] .var-card {
-  background: #F7F4FD;
-  border-color: rgba(123, 63, 152, 0.24);
-  box-shadow: 0 4px 16px rgba(123, 63, 152, 0.08);
+  background: #FFFFFF;
+  border-color: rgba(142, 91, 255, 0.22);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 :root[data-theme='light'] .narration {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(142, 91, 255, 0.35);
-  box-shadow: 0 4px 16px rgba(123, 63, 152, 0.12);
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(142, 91, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 }
 
 :root[data-theme='light'] .narration .text {
@@ -3443,8 +3564,8 @@ button {
 
 :root[data-theme='light'] .youtube-player-bar {
   background: rgba(255, 255, 255, 0.96);
-  border-color: rgba(123, 63, 152, 0.25);
-  box-shadow: 0 -4px 20px rgba(123, 63, 152, 0.1);
+  border-color: rgba(142, 91, 255, 0.22);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
 }
 
 :root[data-theme='light'] .player-time-badge,
@@ -3453,31 +3574,33 @@ button {
 }
 
 :root[data-theme='light'] .callstack {
-  background: #EFE9F8;
+  background: #F1F5F9;
 }
 
 :root[data-theme='light'] .callstack-frame {
-  background: #F7F4FD;
-  color: #43325B;
-  border-color: rgba(123, 63, 152, 0.25);
+  background: #FFFFFF;
+  color: #0F172A;
+  border-color: rgba(142, 91, 255, 0.22);
 }
 
 :root[data-theme='light'] .bar-value-pill {
-  background: rgba(123, 63, 152, 0.12);
-  color: #1C0F35;
+  background: rgba(142, 91, 255, 0.12);
+  color: #0F172A;
 }
 
 :root[data-theme='light'] .var-code-block {
-  background: #E8E1F5;
-  color: #6B21A8;
-  border-color: rgba(123, 63, 152, 0.3);
+  background: #F1F5F9;
+  color: #7C3AED;
+  border-color: rgba(142, 91, 255, 0.25);
 }
 
 /* Light Theme Code Syntax Token Colors */
-:root[data-theme='light'] .t-com { color: #796695; font-style: italic; }
-:root[data-theme='light'] .t-kw { color: #9333EA; font-weight: 700; }
+:root[data-theme='light'] .t-com { color: #64748B; font-style: italic; }
+:root[data-theme='light'] .t-kw { color: #7C3AED; font-weight: 700; }
 :root[data-theme='light'] .t-str { color: #059669; }
 :root[data-theme='light'] .t-num { color: #D97706; font-weight: 700; }
+:root[data-theme='light'] .t-op { color: #334155; }
+:root[data-theme='light'] .t-var { color: #2563EB; }
 :root[data-theme='light'] .t-op { color: #43325B; }
 :root[data-theme='light'] .t-var { color: #2563EB; }
 
