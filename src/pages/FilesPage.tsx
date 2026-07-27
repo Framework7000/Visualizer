@@ -114,29 +114,51 @@ export default function FilesPage() {
 
   return (
     <div className="files-page-container ultra-minimal">
-      {/* Ultra Minimal Header Row */}
-      <div className="files-header-row ultra-minimal">
-        <div className="files-title-group">
-          <h1 className="files-main-title">Files</h1>
-        </div>
-
-        {/* Minimal Plus Icon Button */}
-        <button
-          className="files-create-btn icon-only"
-          onClick={() => setNewModalOpen(true)}
-          title="New File"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
+      {/* Ambient Floating Glow Animation Background */}
+      <div className="files-ambient-bg">
+        <div className="ambient-orb orb-1"></div>
+        <div className="ambient-orb orb-2"></div>
       </div>
 
-      {/* Toolbar: Search & Filters */}
-      <div className="files-toolbar ultra-minimal">
-        <div className="files-search-wrap ultra-minimal">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      {/* Top Header Row: Files Title on Left, Frameless Filter Pills + Plus Button on Right */}
+      <div className="files-header-row ultra-minimal">
+        <h1 className="files-main-title">Files</h1>
+
+        <div className="files-header-actions">
+          {/* Frameless Filter Pills */}
+          <div className="files-filter-pills frameless">
+            <button className={`filter-pill ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
+              All ({files.length})
+            </button>
+            <button className={`filter-pill ${filter === 'learn' ? 'active' : ''}`} onClick={() => setFilter('learn')}>
+              Learn
+            </button>
+            <button className={`filter-pill ${filter === 'python' ? 'active' : ''}`} onClick={() => setFilter('python')}>
+              Python
+            </button>
+            <button className={`filter-pill ${filter === 'starred' ? 'active' : ''}`} onClick={() => setFilter('starred')}>
+              ★ Starred ({starredCount})
+            </button>
+          </div>
+
+          {/* Plus Icon Button in same row */}
+          <button
+            className="files-create-btn icon-only"
+            onClick={() => setNewModalOpen(true)}
+            title="New File"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Long Search Bar Row */}
+      <div className="files-search-row">
+        <div className="files-search-wrap long">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input
             type="text"
-            className="files-search-input ultra-minimal"
+            className="files-search-input long"
             placeholder="Search files..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -144,21 +166,6 @@ export default function FilesPage() {
           {search && (
             <button className="clear-search-btn" onClick={() => setSearch('')}>✕</button>
           )}
-        </div>
-
-        <div className="files-filter-pills ultra-minimal">
-          <button className={`filter-pill ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
-            All ({files.length})
-          </button>
-          <button className={`filter-pill ${filter === 'learn' ? 'active' : ''}`} onClick={() => setFilter('learn')}>
-            Learn
-          </button>
-          <button className={`filter-pill ${filter === 'python' ? 'active' : ''}`} onClick={() => setFilter('python')}>
-            Python
-          </button>
-          <button className={`filter-pill ${filter === 'starred' ? 'active' : ''}`} onClick={() => setFilter('starred')}>
-            Starred ({starredCount})
-          </button>
         </div>
       </div>
 
