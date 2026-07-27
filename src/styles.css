@@ -6015,9 +6015,65 @@ button {
 }
 
 .folder-card.ultra-minimal:hover {
-  transform: translateY(-2px);
-  border-color: rgba(142, 91, 255, 0.5);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 16px rgba(142, 91, 255, 0.15);
+  transform: none; /* No jarring jump up */
+  border-color: rgba(142, 91, 255, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(142, 91, 255, 0.2);
+}
+
+/* Star Pop Burst Animation */
+@keyframes starPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5) rotate(15deg); }
+  80% { transform: scale(0.9) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.star-btn.burst {
+  animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Editable Title & Inline Rename Input */
+.folder-card-title.editable {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.title-edit-btn {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.folder-card.ultra-minimal:hover .title-edit-btn {
+  opacity: 0.7;
+}
+
+.title-edit-btn:hover {
+  opacity: 1 !important;
+  color: #8E5BFF;
+  transform: scale(1.15);
+}
+
+.folder-card-title-input {
+  background: rgba(14, 18, 32, 0.9);
+  border: 1px solid #8E5BFF;
+  border-radius: 6px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  outline: none;
+  width: 100%;
+  box-shadow: 0 0 14px rgba(142, 91, 255, 0.35);
 }
 
 /* Curved Folder Top Tab */
