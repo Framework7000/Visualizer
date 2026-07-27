@@ -214,7 +214,7 @@ export default function FilesPage() {
 
       {/* Row 1: Saved Files Title & Precise Description */}
       <div className="files-header-title-row">
-        <h1 className="files-main-title">Saved Files</h1>
+        <h1 className="files-main-title animated-shimmer">Saved Files</h1>
         <p className="files-subtitle">Manage, edit, and launch your saved Python scripts and algorithm visualisations.</p>
       </div>
 
@@ -237,10 +237,8 @@ export default function FilesPage() {
             onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           />
           <div className="search-trailing">
-            {search ? (
+            {search && (
               <button className="clear-search-btn" onClick={() => setSearch('')} title="Clear search">✕</button>
-            ) : (
-              <kbd className="search-shortcut-badge">⌘K</kbd>
             )}
           </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface Exercise {
@@ -137,23 +137,10 @@ export default function ExercisesPage() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
-  // Shortcut (Cmd+K / Ctrl+K) to focus search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        const inputEl = document.querySelector('.challenges-search-input') as HTMLInputElement
-        if (inputEl) inputEl.focus()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
-
   const filtered = EXERCISES.filter((ex) => {
     if (filter !== 'all' && ex.lang !== filter) return false
     if (diffFilter !== 'all' && ex.difficulty !== diffFilter) return false
-    if (search && !ex.title.toLowerCase().includes(search.toLowerCase()) && !ex.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))) return false
+    if (search && !ex.title.toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
 
@@ -180,6 +167,7 @@ export default function ExercisesPage() {
       <div className="files-ambient-bg full-page">
         <div className="ambient-orb orb-1"></div>
         <div className="ambient-orb orb-2"></div>
+        <div className="files-animated-grid"></div>
       </div>
 
       {/* Floating Toast */}
@@ -192,7 +180,7 @@ export default function ExercisesPage() {
 
       {/* Page Title Row */}
       <div className="challenges-header-row">
-        <h1 className="challenges-main-title">Coding Challenges</h1>
+        <h1 className="challenges-main-title animated-shimmer">Coding Challenges</h1>
         <p className="challenges-subtitle">Interactive programming quests and algorithmic benchmarks.</p>
       </div>
 
@@ -207,16 +195,14 @@ export default function ExercisesPage() {
           <input
             type="text"
             className="challenges-search-input"
-            placeholder="Search quests or tags..."
+            placeholder="Search exercises..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           />
-          {search ? (
+          {search && (
             <button className="clear-search-btn" onClick={() => setSearch('')}>✕</button>
-          ) : (
-            <kbd className="search-shortcut-badge">⌘K</kbd>
           )}
 
           {searchFocused && search.trim().length > 0 && (
@@ -264,7 +250,7 @@ export default function ExercisesPage() {
         </div>
       </div>
 
-      {/* Cyber Quest Challenge Cards Grid */}
+      {/* Larger Cyber Quest Challenge Cards Grid */}
       {filtered.length > 0 ? (
         <div className="challenges-grid">
           {filtered.map((ex) => {
@@ -299,11 +285,6 @@ export default function ExercisesPage() {
 
                 <div className="cyber-card-body">
                   <h3 className="cyber-card-title">{ex.title}</h3>
-                  <div className="cyber-tags">
-                    {ex.tags.map((t) => (
-                      <span key={t} className="cyber-tag">{t}</span>
-                    ))}
-                  </div>
                 </div>
 
                 <div className="cyber-card-footer">
