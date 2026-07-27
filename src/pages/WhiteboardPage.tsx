@@ -36,6 +36,18 @@ const TOOL_COLORS = ['#8E5BFF', '#38BDF8', '#34D399', '#F59E0B', '#EF4444', '#F4
 
 const GRID_SIZE = 40
 
+// 100% Crash-Proof Unique Identifier Generator
+function safeUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try {
+      return crypto.randomUUID()
+    } catch {
+      // Fallback if blocked by security policies
+    }
+  }
+  return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 9)
+}
+
 function drawGrid(ctx: CanvasRenderingContext2D, w: number, h: number, pan: { x: number; y: number }, zoom: number, isDark: boolean) {
   ctx.clearRect(0, 0, w, h)
   ctx.fillStyle = isDark ? '#07080E' : '#F8FAFC'
@@ -56,35 +68,41 @@ function drawGrid(ctx: CanvasRenderingContext2D, w: number, h: number, pan: { x:
   }
 }
 
-// Helper to generate multi-page PDF previews
+// Helper to generate multi-page PDF previews safely
 function generatePdfPages(filename: string, numPages = 4): string[] {
   const pageSrcs: string[] = []
-  for (let i = 1; i <= numPages; i++) {
-    const canvas = document.createElement('canvas')
-    canvas.width = 650
-    canvas.height = 850
-    const ctx = canvas.getContext('2d')!
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillRect(0, 0, 650, 850)
-    ctx.fillStyle = '#7B3F98'
-    ctx.font = 'bold 26px "Inter", sans-serif'
-    ctx.fillText('📄 ' + filename, 40, 55)
-    ctx.fillStyle = '#64748B'
-    ctx.font = '600 16px "Inter", sans-serif'
-    ctx.fillText(`Page ${i} of ${numPages} — Annotate & Draw directly on this page`, 40, 90)
+  try {
+    for (let i = 1; i <= numPages; i++) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 650
+      canvas.height = 850
+      const ctx = canvas.getContext('2d')
+      if (!ctx) continue
 
-    // Page border frame
-    ctx.strokeStyle = '#8E5BFF'
-    ctx.lineWidth = 2
-    ctx.strokeRect(30, 115, 590, 695)
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, 650, 850)
+      ctx.fillStyle = '#7B3F98'
+      ctx.font = 'bold 26px "Inter", sans-serif'
+      ctx.fillText('📄 ' + filename, 40, 55)
+      ctx.fillStyle = '#64748B'
+      ctx.font = '600 16px "Inter", sans-serif'
+      ctx.fillText(`Page ${i} of ${numPages} — Annotate & Draw directly on this page`, 40, 90)
 
-    // Dummy content lines for visual realism
-    ctx.fillStyle = '#E2E8F0'
-    for (let l = 0; l < 14; l++) {
-      ctx.fillRect(50, 150 + l * 40, (l % 3 === 0 ? 300 : 540), 14)
+      // Page border frame
+      ctx.strokeStyle = '#8E5BFF'
+      ctx.lineWidth = 2
+      ctx.strokeRect(30, 115, 590, 695)
+
+      // Dummy content lines for visual realism
+      ctx.fillStyle = '#E2E8F0'
+      for (let l = 0; l < 14; l++) {
+        ctx.fillRect(50, 150 + l * 40, (l % 3 === 0 ? 300 : 540), 14)
+      }
+
+      pageSrcs.push(canvas.toDataURL())
     }
-
-    pageSrcs.push(canvas.toDataURL())
+  } catch (err) {
+    console.error('PDF page preview generation failed:', err)
   }
   return pageSrcs
 }
@@ -149,7 +167,7 @@ export default function WhiteboardPage() {
     return () => observer.disconnect()
   }, [])
 
-  // Cache loaded HTMLImageElements for uploads
+  // Cache loaded HTMLImageElements for uploads safely
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map())
 
   // Snapshot for undo
@@ -217,7 +235,9 @@ export default function WhiteboardPage() {
   // Canvas Redraw Logic
   const redraw = useCallback(() => {
     const c = canvasRef.current; if (!c) return
-    const ctx = c.getContext('2d')!
+    const ctx = c.getContext('2d')
+    if (!ctx) return
+
     drawGrid(ctx, c.width, c.height, pan, zoom, isDark)
 
     ctx.save()
@@ -233,13 +253,18 @@ export default function WhiteboardPage() {
         img = new Image()
         img.src = doc.src
         img.onload = () => redraw()
+        img.onerror = () => console.warn('Document image failed to render:', doc.id)
         imageCache.current.set(doc.id, img)
       }
       if (img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, doc.x, doc.y, doc.w, doc.h)
-        ctx.strokeStyle = isDark ? 'rgba(142, 91, 255, 0.4)' : 'rgba(123, 63, 152, 0.3)'
-        ctx.lineWidth = 2
-        ctx.strokeRect(doc.x, doc.y, doc.w, doc.h)
+        try {
+          ctx.drawImage(img, doc.x, doc.y, doc.w, doc.h)
+          ctx.strokeStyle = isDark ? 'rgba(142, 91, 255, 0.4)' : 'rgba(123, 63, 152, 0.3)'
+          ctx.lineWidth = 2
+          ctx.strokeRect(doc.x, doc.y, doc.w, doc.h)
+        } catch (e) {
+          console.warn('Canvas drawImage error:', e)
+        }
       }
     }
 
@@ -363,7 +388,8 @@ export default function WhiteboardPage() {
   }
 
   function evPos(e: React.PointerEvent) {
-    const rect = overlayRef.current!.getBoundingClientRect()
+    if (!overlayRef.current) return { sx: 0, sy: 0 }
+    const rect = overlayRef.current.getBoundingClientRect()
     return { sx: e.clientX - rect.left, sy: e.clientY - rect.top }
   }
 
@@ -422,12 +448,12 @@ export default function WhiteboardPage() {
           if (isPdf) {
             const pages = generatePdfPages(file.name, 4)
             return [...prev, {
-              id: crypto.randomUUID(),
+              id: safeUUID(),
               x: worldCenter.x - 325 + staggerOffset,
               y: worldCenter.y - 425 + staggerOffset,
               w: 650,
               h: 850,
-              src: pages[0],
+              src: pages[0] || src,
               pages,
               currentPage: 1,
               totalPages: pages.length,
@@ -444,7 +470,7 @@ export default function WhiteboardPage() {
               const initialH = initialW * aspect
 
               setUploads(currentUploads => [...currentUploads, {
-                id: crypto.randomUUID(),
+                id: safeUUID(),
                 x: worldCenter.x - initialW / 2 + staggerOffset,
                 y: worldCenter.y - initialH / 2 + staggerOffset,
                 w: initialW,
@@ -455,28 +481,28 @@ export default function WhiteboardPage() {
                 isMinimized: false,
               }])
             }
-            return prev
           }
+          return prev
         })
       }
-
       reader.readAsDataURL(file)
     })
   }, [pushHistory, screenToWorld])
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) processFiles(e.target.files)
-    e.target.value = ''
   }
 
-  // Drag and Drop handlers
   function onDragOver(e: React.DragEvent) {
     e.preventDefault()
     setIsDragOver(true)
   }
-  function onDragLeave() {
+
+  function onDragLeave(e: React.DragEvent) {
+    e.preventDefault()
     setIsDragOver(false)
   }
+
   function onDrop(e: React.DragEvent) {
     e.preventDefault()
     setIsDragOver(false)
@@ -489,7 +515,6 @@ export default function WhiteboardPage() {
   }
 
   function onPointerDown(e: React.PointerEvent) {
-    // Dismiss active editing text if user clicks elsewhere
     if (editingText) setEditingText(null)
     if (editingSticky) setEditingSticky(null)
 
@@ -497,7 +522,6 @@ export default function WhiteboardPage() {
     const { x: wx, y: wy } = screenToWorld(sx, sy)
 
     if (tool === 'select' || e.button === 1 || e.altKey) {
-      // Check if user clicked on existing text element to edit it
       const clickedText = [...texts].reverse().find(t =>
         wx >= t.x - 15 && wx <= t.x + (t.text.length * t.size * 0.7) + 20 &&
         wy >= t.y - t.size - 10 && wy <= t.y + 15
@@ -507,7 +531,6 @@ export default function WhiteboardPage() {
         return
       }
 
-      // Check if pointer clicked on an uploaded document (header or body)
       const clickedDoc = [...uploads].reverse().find(doc =>
         wx >= doc.x && wx <= doc.x + doc.w && wy >= doc.y - 36 && wy <= doc.y + (doc.isMinimized ? 40 : doc.h)
       )
@@ -519,7 +542,6 @@ export default function WhiteboardPage() {
         return
       }
 
-      // Otherwise pan the canvas
       isPanning.current = true
       panStart.current = { x: sx, y: sy }
       panOrigin.current = { ...pan }
@@ -534,14 +556,14 @@ export default function WhiteboardPage() {
 
     if (tool === 'sticky') {
       pushHistory()
-      setStickies(prev => [...prev, { id: crypto.randomUUID(), x: wx - 75, y: wy - 60, w: 150, h: 120, text: 'New Note', color: STICKY_COLORS[Math.floor(Math.random() * STICKY_COLORS.length)] }])
+      setStickies(prev => [...prev, { id: safeUUID(), x: wx - 75, y: wy - 60, w: 150, h: 120, text: 'New Note', color: STICKY_COLORS[Math.floor(Math.random() * STICKY_COLORS.length)] }])
       setTool('select')
       return
     }
 
     if (tool === 'text') {
       pushHistory()
-      const id = crypto.randomUUID()
+      const id = safeUUID()
       setTexts(prev => [...prev, { id, x: wx, y: wy, text: '', size: 24, color }])
       setEditingText(id)
       setTool('select')
@@ -551,7 +573,7 @@ export default function WhiteboardPage() {
     if (tool === 'pen') {
       pushHistory()
       isDrawing.current = true
-      currentPath.current = { id: crypto.randomUUID(), points: [[wx, wy]], color, width: strokeWidth, tool: 'pen' }
+      currentPath.current = { id: safeUUID(), points: [[wx, wy]], color, width: strokeWidth, tool: 'pen' }
       setPaths(prev => [...prev, currentPath.current!])
       return
     }
@@ -559,7 +581,7 @@ export default function WhiteboardPage() {
     if (['rect', 'circle', 'line', 'arrow'].includes(tool)) {
       pushHistory()
       isShaping.current = true
-      currentShape.current = { id: crypto.randomUUID(), type: tool as Shape['type'], x: wx, y: wy, x2: wx, y2: wy, color, width: strokeWidth }
+      currentShape.current = { id: safeUUID(), type: tool as Shape['type'], x: wx, y: wy, x2: wx, y2: wy, color, width: strokeWidth }
       setShapes(prev => [...prev, currentShape.current!])
       return
     }
@@ -569,7 +591,6 @@ export default function WhiteboardPage() {
     const { sx, sy } = evPos(e)
     const { x: wx, y: wy } = screenToWorld(sx, sy)
 
-    // Handle corner resizing of uploaded documents
     if (resizingDocId.current) {
       const dw = (sx - resizeStartPos.current.x) / zoom
       const dh = (sy - resizeStartPos.current.y) / zoom
@@ -582,7 +603,6 @@ export default function WhiteboardPage() {
       return
     }
 
-    // Handle document dragging
     if (draggingDocId.current) {
       const dx = wx - docDragStart.current.x
       const dy = wy - docDragStart.current.y
@@ -629,7 +649,10 @@ export default function WhiteboardPage() {
 
   function exportPNG() {
     const c = canvasRef.current; if (!c) return
-    const link = document.createElement('a'); link.download = 'gradenext-whiteboard.png'; link.href = c.toDataURL(); link.click()
+    const link = document.createElement('a')
+    link.download = 'gradenext-whiteboard.png'
+    link.href = c.toDataURL()
+    link.click()
   }
 
   function clearBoard() {
@@ -751,25 +774,26 @@ export default function WhiteboardPage() {
 
         <span className="wb-tool-divider" />
 
-        <button className="wb-tool-btn" onClick={undo} disabled={history.length === 0} title="Undo (Ctrl+Z / ⌘Z)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+        {/* Actions */}
+        <button className="wb-tool-btn" onClick={undo} disabled={history.length === 0} title={isMac ? "Undo (⌘Z)" : "Undo (Ctrl+Z)"}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
         </button>
-        <button className="wb-tool-btn" onClick={redo} disabled={future.length === 0} title="Redo (Ctrl+Y / ⌘⇧Z)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+        <button className="wb-tool-btn" onClick={redo} disabled={future.length === 0} title={isMac ? "Redo (⌘⇧Z)" : "Redo (Ctrl+Y)"}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
         </button>
+
         <button className="wb-tool-btn" onClick={exportPNG} title="Export PNG">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </button>
-        <button className="wb-tool-btn wb-clear" onClick={clearBoard} title="Clear Board">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <button className="wb-tool-btn danger" onClick={clearBoard} title="Clear Board">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>
 
-      {/* Main Canvas Container with Drag & Drop */}
+      {/* Main Canvas Overlay Container */}
       <div
         ref={overlayRef}
-        className={`wb-canvas-wrap ${isDragOver ? 'drag-over' : ''}`}
-        style={{ cursor: tool === 'select' ? 'grab' : tool === 'eraser' ? 'cell' : 'crosshair' }}
+        className={`wb-overlay ${tool}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -779,171 +803,193 @@ export default function WhiteboardPage() {
       >
         <canvas ref={canvasRef} className="wb-canvas" />
 
-        {/* Drag & Drop Visual Overlay */}
+        {/* Drag & Drop Visual Indication Modal Overlay */}
         {isDragOver && (
           <div className="wb-drag-overlay">
             <div className="wb-drag-modal">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8E5BFF" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <h3>Drop PDF or Images Here</h3>
-              <p>Files will be added directly to the Whiteboard for annotation</p>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8E5BFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <h3>Drop PDF or Image Documents</h3>
+              <p>Place files directly onto your Visual Whiteboard canvas</p>
             </div>
           </div>
         )}
 
-        {/* Floating Headers for Uploaded Documents */}
+        {/* Render Uploaded Documents Header Toolbars & Resize Handles */}
         {uploads.map(doc => {
-          const pos = { x: doc.x * zoom + pan.x, y: doc.y * zoom + pan.y }
+          const sx = doc.x * zoom + pan.x
+          const sy = doc.y * zoom + pan.y
+          const sw = doc.w * zoom
+          const sh = doc.h * zoom
+
           return (
-            <div key={doc.id}>
-              {/* Document Top Header Bar */}
+            <div
+              key={doc.id}
+              className={`wb-doc-wrapper ${doc.isMinimized ? 'minimized' : ''}`}
+              style={{
+                left: `${sx}px`,
+                top: `${sy}px`,
+                width: `${sw}px`,
+                height: doc.isMinimized ? 'auto' : `${sh}px`,
+              }}
+            >
+              {/* Document Header Control Bar */}
               <div
-                className={`wb-doc-header-overlay ${doc.isMinimized ? 'minimized' : ''}`}
-                style={{
-                  left: pos.x,
-                  top: doc.isMinimized ? pos.y : pos.y - 34 * zoom,
-                  width: doc.isMinimized ? Math.max(260, doc.w * zoom * 0.4) : doc.w * zoom,
-                  cursor: 'grab',
+                className="wb-doc-bar"
+                onPointerDown={(e) => {
+                  e.stopPropagation()
+                  pushHistory()
+                  const { sx: msx, sy: msy } = evPos(e)
+                  const { x: mwx, y: mwy } = screenToWorld(msx, msy)
+                  draggingDocId.current = doc.id
+                  docDragStart.current = { x: mwx, y: mwy }
+                  docOrigin.current = { x: doc.x, y: doc.y }
                 }}
               >
-                <div className="doc-title-group">
-                  <span className="doc-label" title={doc.name}>📄 {doc.name}</span>
+                <div className="wb-doc-title" title={doc.name}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>{doc.name}</span>
                 </div>
 
-                {/* Controls Group */}
-                <div className="doc-controls-group" onClick={e => e.stopPropagation()}>
-                  {/* PDF Multi-page Prev / Next Controls */}
-                  {doc.type === 'pdf' && !doc.isMinimized && doc.totalPages && doc.totalPages > 1 && (
-                    <div className="doc-page-nav">
+                <div className="wb-doc-actions" onPointerDown={e => e.stopPropagation()}>
+                  {/* PDF Page Stepper Controls */}
+                  {doc.type === 'pdf' && doc.pages && !doc.isMinimized && (
+                    <div className="wb-pdf-stepper">
                       <button
-                        className="doc-page-btn"
-                        disabled={(doc.currentPage || 1) <= 1}
+                        className="wb-stepper-btn"
                         onClick={() => changePdfPage(doc.id, -1)}
+                        disabled={(doc.currentPage || 1) <= 1}
                         title="Previous Page"
                       >
-                        ◀
+                        ‹
                       </button>
-                      <span className="doc-page-num">
-                        {doc.currentPage || 1} / {doc.totalPages}
+                      <span className="wb-stepper-num">
+                        {doc.currentPage || 1} / {doc.totalPages || 1}
                       </span>
                       <button
-                        className="doc-page-btn"
-                        disabled={(doc.currentPage || 1) >= doc.totalPages}
+                        className="wb-stepper-btn"
                         onClick={() => changePdfPage(doc.id, 1)}
+                        disabled={(doc.currentPage || 1) >= (doc.totalPages || 1)}
                         title="Next Page"
                       >
-                        ▶
+                        ›
                       </button>
                     </div>
                   )}
 
                   {/* Minimize / Expand Toggle */}
                   <button
-                    className="doc-min-btn"
+                    className="wb-doc-action-btn"
                     onClick={() => toggleMinimizeDoc(doc.id)}
-                    title={doc.isMinimized ? 'Expand Document' : 'Minimize Document'}
+                    title={doc.isMinimized ? "Expand Document" : "Minimize Document"}
                   >
-                    {doc.isMinimized ? '▢' : '─'}
+                    {doc.isMinimized ? '□' : '−'}
                   </button>
 
-                  {/* Remove / Close Button */}
+                  {/* Delete Button */}
                   <button
-                    className="doc-del-btn"
+                    className="wb-doc-action-btn danger"
                     onClick={() => deleteUpload(doc.id)}
-                    title="Remove Document"
+                    title="Delete Document"
                   >
                     ✕
                   </button>
                 </div>
               </div>
 
-              {/* CORNER RESIZE HANDLE (WINDOWS/MAC STYLE NWSE DIAGONAL RESIZE ARROW) */}
+              {/* Bottom Right Resize Grip Handle (If Not Minimized) */}
               {!doc.isMinimized && (
                 <div
                   className="wb-doc-resize-handle"
-                  style={{
-                    left: pos.x + doc.w * zoom - 14,
-                    top: pos.y + doc.h * zoom - 14,
-                  }}
                   onPointerDown={(e) => {
                     e.stopPropagation()
                     pushHistory()
+                    const { sx: msx, sy: msy } = evPos(e)
                     resizingDocId.current = doc.id
-                    const { sx, sy } = evPos(e)
-                    resizeStartPos.current = { x: sx, y: sy }
+                    resizeStartPos.current = { x: msx, y: msy }
                     resizeStartDim.current = { w: doc.w, h: doc.h }
                   }}
-                  title="Drag corner to resize document"
-                />
-              )}
-            </div>
-          )
-        })}
-
-        {/* HTML Stickies Overlay with Close [✕] Button */}
-        {stickies.map(s => {
-          const pos = { x: s.x * zoom + pan.x, y: s.y * zoom + pan.y }
-          return (
-            <div
-              key={s.id}
-              className={`wb-sticky ${editingSticky === s.id ? 'editing' : ''}`}
-              style={{
-                left: pos.x,
-                top: pos.y,
-                width: s.w * zoom,
-                height: s.h * zoom,
-                background: s.color,
-                fontSize: 14 * zoom,
-              }}
-              onDoubleClick={() => setEditingSticky(s.id)}
-            >
-              {/* Top Right Close Button */}
-              <button
-                className="wb-sticky-close-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  deleteSticky(s.id)
-                }}
-                title="Close Note"
-              >
-                ✕
-              </button>
-
-              {editingSticky === s.id ? (
-                <textarea
-                  autoFocus
-                  defaultValue={s.text}
-                  style={{ width: '100%', height: '100%', border: 'none', outline: 'none', background: 'transparent', resize: 'none', font: 'inherit' }}
-                  onBlur={e => {
-                    setStickies(prev => prev.map(item => item.id === s.id ? { ...item, text: e.target.value } : item))
-                    setEditingSticky(null)
-                  }}
-                />
-              ) : (
-                <div style={{ width: '100%', height: '100%', wordBreak: 'break-word', color: '#1E293B' }}>
-                  {s.text || 'Double-click to edit note'}
+                  title="Drag to resize document"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="21" y1="15" x2="15" y2="21"/><line x1="21" y1="8" x2="8" y2="21"/></svg>
                 </div>
               )}
             </div>
           )
         })}
 
-        {/* Editable Texts with Floating Color & Font Box Above */}
+        {/* HTML Sticky Notes */}
+        {stickies.map(s => {
+          const sx = s.x * zoom + pan.x
+          const sy = s.y * zoom + pan.y
+          const sw = s.w * zoom
+          const sh = s.h * zoom
+
+          return (
+            <div
+              key={s.id}
+              className="wb-sticky"
+              style={{
+                left: `${sx}px`,
+                top: `${sy}px`,
+                width: `${sw}px`,
+                height: `${sh}px`,
+                background: s.color,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <div className="wb-sticky-header">
+                {/* Sticky Color Change Palette Swatches */}
+                <div className="wb-sticky-colors">
+                  {STICKY_COLORS.map(c => (
+                    <button
+                      key={c}
+                      className={`wb-sticky-swatch ${s.color === c ? 'active' : ''}`}
+                      style={{ background: c }}
+                      onClick={() => setStickies(prev => prev.map(item => item.id === s.id ? { ...item, color: c } : item))}
+                    />
+                  ))}
+                </div>
+
+                <button className="wb-sticky-del" onClick={() => deleteSticky(s.id)} title="Delete Sticky">✕</button>
+              </div>
+
+              <textarea
+                defaultValue={s.text}
+                placeholder="Sticky note..."
+                style={{ font: `${14 * zoom}px 'Caveat', cursive, sans-serif` }}
+                onChange={e => {
+                  const val = e.target.value
+                  setStickies(prev => prev.map(item => item.id === s.id ? { ...item, text: val } : item))
+                }}
+              />
+            </div>
+          )
+        })}
+
+        {/* Floating Text Inputs while editing */}
         {texts.map(t => {
-          const pos = { x: t.x * zoom + pan.x, y: t.y * zoom + pan.y }
           if (editingText !== t.id) return null
+          const sx = t.x * zoom + pan.x
+          const sy = t.y * zoom + pan.y
+
           return (
             <div
               key={t.id}
+              className="wb-text-edit-wrap"
               style={{
-                position: 'absolute',
-                left: pos.x,
-                top: pos.y,
-                zIndex: 120,
+                left: `${sx}px`,
+                top: `${sy}px`,
               }}
               onPointerDown={e => e.stopPropagation()}
             >
-              {/* FLOATING COLOR & FONT TOOLBAR ABOVE TEXT */}
-              <div className="wb-text-floating-toolbar">
+              {/* Text Floating Format Toolbar */}
+              <div className="wb-text-toolbar">
+                {/* Color Swatches */}
                 <div className="wb-text-colors">
                   {TOOL_COLORS.map(c => (
                     <button
@@ -1037,7 +1083,7 @@ export default function WhiteboardPage() {
           onClick={() => setShowShortcuts(s => !s)}
           title="Keyboard Shortcuts Guide"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6.01" y2="8"/><line x1="10" y1="8" x2="10.01" y2="8"/><line x1="14" y1="8" x2="14.01" y2="8"/><line x1="18" y1="8" x2="18.01" y2="8"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="18" y1="18" x2="18.01" y2="18"/><line x1="8" y1="16" x2="16" y2="16"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6.01" y2="8"/><line x1="10" y1="8" x2="10.01" y2="8"/><line x1="14" y1="8" x2="14.01" y2="8"/><line x1="18" y1="8" x2="18.01" y2="8"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/></svg>
         </button>
 
         {/* FLOATING KEYBOARD SHORTCUTS POPOVER CARD */}
