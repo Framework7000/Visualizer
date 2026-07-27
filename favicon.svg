@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Primary Cap Gradient (Electric Cyan to Neon Purple) -->
+    <linearGradient id="capTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#8E5BFF" />
+      <stop offset="100%" stop-color="#EC4899" />
+    </linearGradient>
+
+    <!-- Base Cap Arc Gradient -->
+    <linearGradient id="capBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1035" />
+      <stop offset="50%" stop-color="#7B3F98" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <!-- Tassel Gradient -->
+    <linearGradient id="tasselGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#A855F7" />
+    </linearGradient>
+
+    <!-- Soft Glow Effect -->
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Floating Minimal Graduation Cap (Transparent Background - No Text/Letters) -->
+  <g transform="translate(0, 15)">
+    <!-- Mortarboard Skullcap Base -->
+    <path d="M 120 230 V 310 C 120 310 180 370 256 370 C 332 370 392 310 392 310 V 230" fill="url(#capBaseGrad)" stroke="#8E5BFF" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Mortarboard Top Diamond -->
+    <path d="M 256 60 L 480 180 L 256 300 L 32 180 Z" fill="url(#capTopGrad)" filter="url(#neonGlow)" stroke="#FFFFFF" stroke-width="4" stroke-opacity="0.6" />
+
+    <!-- Diamond Edge Highlight -->
+    <path d="M 256 60 L 480 180 L 256 300" fill="none" stroke="#38BDF8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+
+    <!-- Cap Center Button -->
+    <ellipse cx="256" cy="180" rx="20" ry="12" fill="#FFFFFF" filter="url(#neonGlow)" />
+
+    <!-- Tassel String -->
+    <path d="M 256 180 C 200 190 140 240 125 320" fill="none" stroke="url(#tasselGrad)" stroke-width="12" stroke-linecap="round" />
+
+    <!-- Tassel Band & Fringe -->
+    <circle cx="125" cy="330" r="14" fill="#38BDF8" filter="url(#neonGlow)" />
+    <path d="M 115 340 L 95 440 M 125 344 L 125 450 M 135 340 L 155 440" stroke="url(#tasselGrad)" stroke-width="10" stroke-linecap="round" />
+  </g>
+</svg>
