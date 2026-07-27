@@ -5786,9 +5786,9 @@ button {
    ============================================= */
 
 .files-page-container.ultra-minimal {
-  padding: 24px 32px;
-  gap: 20px;
-  max-width: 1200px;
+  padding: 32px 40px;
+  gap: 26px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
 }
@@ -5797,10 +5797,11 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 4px;
 }
 
 .files-main-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 900;
   color: var(--ink);
   margin: 0 0 2px;
@@ -5817,10 +5818,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   padding: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #8E5BFF 0%, #38BDF8 100%);
   color: #FFFFFF;
   border: none;
@@ -5839,18 +5840,19 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
+  margin-bottom: 6px;
 }
 
 .files-search-wrap.ultra-minimal {
   position: relative;
   flex: 1;
-  max-width: 340px;
+  max-width: 360px;
 }
 
 .files-search-wrap.ultra-minimal .search-icon {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--ink-muted);
@@ -5858,33 +5860,33 @@ button {
 
 .files-search-input.ultra-minimal {
   width: 100%;
-  height: 36px;
-  padding: 0 30px 0 34px;
+  height: 38px;
+  padding: 0 32px 0 38px;
   border-radius: 10px;
   background: var(--card-bg);
   border: 1px solid var(--border-glass-strong);
   color: var(--ink);
   font-family: var(--ui);
-  font-size: 12.5px;
+  font-size: 13px;
   outline: none;
 }
 
 .files-filter-pills.ultra-minimal {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: var(--card-bg);
-  padding: 3px;
-  border-radius: 10px;
+  padding: 4px;
+  border-radius: 12px;
   border: 1px solid var(--border-glass);
 }
 
 /* Folder Grid & Folder Tab Cards */
 .folder-grid.ultra-minimal {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px 18px;
-  padding-top: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 32px 22px;
+  padding-top: 18px;
 }
 
 .folder-card.ultra-minimal {
