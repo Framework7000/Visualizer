@@ -5850,6 +5850,13 @@ button {
   letter-spacing: -0.01em;
 }
 
+.files-subtitle {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
 /* Single Integrated Toolbar Row */
 .files-unified-toolbar {
   display: flex;

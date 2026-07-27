@@ -120,9 +120,10 @@ export default function FilesPage() {
         <div className="ambient-orb orb-2"></div>
       </div>
 
-      {/* Row 1: Files Title */}
+      {/* Row 1: Saved Files Title & Precise Description */}
       <div className="files-header-title-row">
-        <h1 className="files-main-title">Files</h1>
+        <h1 className="files-main-title">Saved Files</h1>
+        <p className="files-subtitle">Manage, edit, and launch your saved Python scripts and algorithm visualisations.</p>
       </div>
 
       {/* Row 2: ONE SINGLE INTEGRATED ROW - Search Input on Left, Filter Pills + Plus Button on Right */}
