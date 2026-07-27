@@ -5960,7 +5960,8 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 32px 22px;
-  padding-top: 18px;
+  margin-top: 24px;
+  padding-top: 16px;
 }
 
 .folder-card.ultra-minimal {
