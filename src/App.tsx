@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LearnMode from './modes/LearnMode'
 import PythonLab from './modes/PythonLab'
 import CommandPalette from './components/CommandPalette'
@@ -164,7 +164,7 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <HashRouter>
+      <BrowserRouter basename={(import.meta as any).env?.BASE_URL || '/'}>
         <Routes>
           <Route
             element={
@@ -221,7 +221,7 @@ export default function App() {
           mode={mode}
           theme={theme}
         />
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   )
 }
