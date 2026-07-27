@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface Exercise {
@@ -126,201 +126,224 @@ const EXERCISES: Exercise[] = [
   },
 ]
 
-const DIFF_COLORS: Record<string, string> = { Easy: '#34D399', Medium: '#F59E0B', Hard: '#EF4444' }
-const LANG_COLORS: Record<string, string> = { Python: '#38BDF8', 'Web Dev': '#F472B6', Java: '#34D399' }
+const DIFF_ACCENTS: Record<string, { color: string; bg: string }> = {
+  Easy: { color: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' },
+  Medium: { color: '#F59E0B', bg: 'rgba(245, 158, 11, 0.12)' },
+  Hard: { color: '#F43F5E', bg: 'rgba(244, 63, 94, 0.12)' }
+}
 
 export default function ExercisesPage() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<'all' | 'Python' | 'Web Dev' | 'Java'>('all')
   const [diffFilter, setDiffFilter] = useState<'all' | 'Easy' | 'Medium' | 'Hard'>('all')
   const [search, setSearch] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+
+  // Shortcut (Cmd+K / Ctrl+K) to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        const inputEl = document.querySelector('.exercises-search-input.inline') as HTMLInputElement
+        if (inputEl) inputEl.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const filtered = EXERCISES.filter((ex) => {
     if (filter !== 'all' && ex.lang !== filter) return false
     if (diffFilter !== 'all' && ex.difficulty !== diffFilter) return false
-    if (search && !ex.title.toLowerCase().includes(search.toLowerCase())) return false
+    if (search && !ex.title.toLowerCase().includes(search.toLowerCase()) && !ex.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))) return false
     return true
   })
-
-  const totalQuestions = EXERCISES.reduce((a, e) => a + e.questions, 0)
-  const doneQuestions = EXERCISES.reduce((a, e) => a + e.done, 0)
-  const totalDoneExercises = EXERCISES.filter((e) => e.done === e.questions).length
-  const totalInProgressExercises = EXERCISES.filter((e) => e.done > 0 && e.done < e.questions).length
 
   function triggerToast(msg: string) {
     setToast(msg)
     setTimeout(() => setToast(null), 3000)
   }
 
-  function handleLaunchExercise(ex: Exercise) {
-    triggerToast(`Launching "${ex.title}" in ${ex.lang === 'Web Dev' ? 'Workbench' : 'Visualiser'}!`)
+  function handleLaunchExercise(ex: Exercise, e: React.MouseEvent) {
+    e.stopPropagation()
+    triggerToast(`Launching "${ex.title}"...`)
     setTimeout(() => {
       if (ex.lang === 'Web Dev') {
         navigate('/workbench')
       } else {
         navigate('/visualiser')
       }
-    }, 400)
+    }, 350)
   }
 
   return (
-    <div className="exercises-page">
+    <div className="exercises-page-container ultra-minimal">
+      {/* Full Page Ambient Glow & Animated Tech Grid Background */}
+      <div className="files-ambient-bg full-page">
+        <div className="ambient-orb orb-1"></div>
+        <div className="ambient-orb orb-2"></div>
+        <div className="files-animated-grid"></div>
+      </div>
+
       {/* Floating Toast */}
       {toast && (
         <div className="wb-floating-toast">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34D399" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           <span>{toast}</span>
         </div>
       )}
 
-      {/* Hero Stats Banner */}
-      <div className="exercises-hero-header">
-        <div className="ex-hero-text">
-          <h1 className="exercises-title">Coding Exercises &amp; Challenges</h1>
-          <p className="exercises-sub">Master algorithm concepts, data structures, and live web apps with interactive step-by-step guidance.</p>
-        </div>
-
-        <div className="ex-stats-grid">
-          <div className="ex-stat-card">
-            <span className="ex-stat-val" style={{ color: '#34D399' }}>{totalDoneExercises}</span>
-            <span className="ex-stat-lbl">Completed</span>
-          </div>
-          <div className="ex-stat-card">
-            <span className="ex-stat-val" style={{ color: '#F59E0B' }}>{totalInProgressExercises}</span>
-            <span className="ex-stat-lbl">In Progress</span>
-          </div>
-          <div className="ex-stat-card">
-            <span className="ex-stat-val" style={{ color: '#8E5BFF' }}>{doneQuestions * 25} XP</span>
-            <span className="ex-stat-lbl">XP Earned</span>
-          </div>
-        </div>
+      {/* Header Row */}
+      <div className="files-header-title-row">
+        <h1 className="files-main-title">Coding Exercises</h1>
+        <p className="files-subtitle">Master algorithm concepts, data structures, and live web apps with interactive step-by-step challenges.</p>
       </div>
 
-      {/* Progress Track */}
-      <div className="exercises-overall-progress">
-        <div className="ex-prog-header">
-          <span>Overall Course Progress</span>
-          <span className="ex-prog-count">{doneQuestions} / {totalQuestions} Questions Passed</span>
-        </div>
-        <div className="exercises-progress-bar">
-          <div
-            className="epb-fill"
-            style={{ width: `${Math.round((doneQuestions / totalQuestions) * 100)}%` }}
+      {/* Single Integrated Toolbar Row */}
+      <div className="files-unified-toolbar">
+        {/* Google-Style Pill Search Bar */}
+        <div className={`files-search-wrap inline google-style ${searchFocused ? 'focused' : ''}`}>
+          <div className="search-leading">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="search-icon">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <input
+            type="text"
+            className="files-search-input inline google-style exercises-search-input"
+            placeholder="Search exercises by title or tag (e.g. recursion, sorting)..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           />
-        </div>
-      </div>
-
-      {/* Filters Bar */}
-      <div className="exercises-filters">
-        <div className="ex-filter-top-row">
-          <div className="filter-search">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input
-              type="text"
-              placeholder="Search exercises by title or tag (e.g. recursion, sorting, html)…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="exercises-search-input"
-            />
-            {search && (
-              <button className="search-clear-btn" onClick={() => setSearch('')}>✕</button>
+          <div className="search-trailing">
+            {search ? (
+              <button className="clear-search-btn" onClick={() => setSearch('')} title="Clear search">✕</button>
+            ) : (
+              <kbd className="search-shortcut-badge">⌘K</kbd>
             )}
           </div>
-        </div>
 
-        <div className="ex-filter-bottom-row">
-          <div className="filter-group">
-            <span className="filter-group-label">Language:</span>
-            <div className="filter-pills">
-              {(['all', 'Python', 'Web Dev', 'Java'] as const).map((l) => (
-                <button
-                  key={l}
-                  className={`filter-pill ${filter === l ? 'active' : ''}`}
-                  onClick={() => setFilter(l)}
-                >
-                  {l === 'all' ? 'All Languages' : l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <span className="filter-group-label">Difficulty:</span>
-            <div className="filter-pills">
-              {(['all', 'Easy', 'Medium', 'Hard'] as const).map((d) => (
-                <button
-                  key={d}
-                  className={`filter-pill ${diffFilter === d ? 'active' : ''}`}
-                  style={
-                    diffFilter === d && d !== 'all'
-                      ? { background: DIFF_COLORS[d] + '22', borderColor: DIFF_COLORS[d], color: DIFF_COLORS[d] }
-                      : {}
-                  }
-                  onClick={() => setDiffFilter(d)}
-                >
-                  {d === 'all' ? 'All Levels' : d}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Exercise Cards Grid */}
-      <div className="exercises-grid">
-        {filtered.map((ex) => {
-          const pct = Math.round((ex.done / ex.questions) * 100)
-          const btnClass = pct === 100 ? 'btn-completed' : pct > 0 ? 'btn-inprogress' : 'btn-start'
-
-          return (
-            <div key={ex.id} className="exercise-card" onClick={() => handleLaunchExercise(ex)}>
-              <div className="ex-card-top">
-                <div className="ex-badge-group">
-                  <span className="ex-lang-tag" style={{ color: LANG_COLORS[ex.lang] ?? '#8E5BFF' }}>
-                    {ex.lang}
-                  </span>
-                  <span className="ex-diff-tag" style={{ color: DIFF_COLORS[ex.difficulty] }}>
-                    {ex.difficulty}
-                  </span>
-                </div>
-                {pct === 100 && (
-                  <span className="ex-done-badge">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Completed</span>
-                  </span>
-                )}
-              </div>
-
-              <h3 className="ex-title">{ex.title}</h3>
-
-              <div className="ex-tags">
-                {ex.tags.map((t) => (
-                  <span key={t} className="ex-tag">{t}</span>
-                ))}
-              </div>
-
-              <div className="ex-progress">
-                <div className="ex-progress-bar">
+          {/* Autocomplete Dropdown */}
+          {searchFocused && search.trim().length > 0 && (
+            <div className="google-search-dropdown">
+              {filtered.length > 0 ? (
+                filtered.map(ex => (
                   <div
-                    className="ex-progress-fill"
-                    style={{
-                      width: `${pct}%`,
-                      background: pct === 100 ? '#34D399' : 'linear-gradient(90deg, #8E5BFF, #38BDF8)',
-                    }}
-                  />
-                </div>
-                <span className="ex-progress-text">{ex.done}/{ex.questions}</span>
-              </div>
-
-              <button className={`ex-start-btn ${btnClass}`}>
-                <span>{pct === 0 ? 'Start Exercise' : pct === 100 ? 'Review Code' : 'Continue Challenge'}</span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
+                    key={ex.id}
+                    className="search-suggestion-item"
+                    onMouseDown={(e) => handleLaunchExercise(ex, e as any)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <span className="suggestion-name">{ex.title}</span>
+                    <span className="suggestion-badge" style={{ color: DIFF_ACCENTS[ex.difficulty]?.color }}>{ex.lang} • {ex.difficulty}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="search-suggestion-empty">No matching exercises found</div>
+              )}
             </div>
-          )
-        })}
+          )}
+        </div>
+
+        {/* Frameless Filter Pills */}
+        <div className="files-filter-group">
+          {(['all', 'Python', 'Web Dev', 'Java'] as const).map((l) => (
+            <button
+              key={l}
+              className={`unified-pill ${filter === l ? 'active' : ''}`}
+              onClick={() => setFilter(l)}
+            >
+              {l === 'all' ? 'All Languages' : l}
+            </button>
+          ))}
+
+          {(['all', 'Easy', 'Medium', 'Hard'] as const).map((d) => (
+            <button
+              key={d}
+              className={`unified-pill ${diffFilter === d ? 'active' : ''}`}
+              onClick={() => setDiffFilter(d)}
+            >
+              {d === 'all' ? 'All Levels' : d}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Minimal Exercise Cards Grid */}
+      {filtered.length > 0 ? (
+        <div className="folder-grid ultra-minimal">
+          {filtered.map((ex) => {
+            const pct = Math.round((ex.done / ex.questions) * 100)
+            const accent = DIFF_ACCENTS[ex.difficulty] || { color: '#8E5BFF', bg: 'rgba(142, 91, 255, 0.12)' }
+            const isCompleted = pct === 100
+
+            return (
+              <div
+                className="folder-card ultra-minimal exercise-card-minimal"
+                key={ex.id}
+                style={{ '--folder-accent': accent.color } as React.CSSProperties}
+              >
+                {/* Curved Folder Top Tab */}
+                <div className="folder-card-tab">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span className="folder-tab-label">{ex.lang.toUpperCase()} • {ex.difficulty.toUpperCase()}</span>
+                </div>
+
+                <div className="folder-card-header">
+                  {isCompleted ? (
+                    <span className="ex-completed-badge">
+                      ✓ Completed
+                    </span>
+                  ) : (
+                    <span className="ex-questions-count">
+                      {ex.done}/{ex.questions} Passed
+                    </span>
+                  )}
+                </div>
+
+                <div className="folder-card-body ultra-minimal">
+                  <div className="folder-icon-wrap" style={{ color: accent.color }}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </div>
+                  <div className="ex-title-group">
+                    <h3 className="folder-card-title">{ex.title}</h3>
+                    <div className="ex-mini-tags">
+                      {ex.tags.map((t) => (
+                        <span key={t} className="ex-tag-pill">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="folder-card-footer ultra-minimal">
+                  <div className="ex-card-progress-bar">
+                    <div
+                      className="ex-card-progress-fill"
+                      style={{ width: `${pct}%`, background: accent.color }}
+                    />
+                  </div>
+                  <button
+                    className="folder-open-btn ultra-minimal"
+                    style={{ background: accent.color }}
+                    onClick={(e) => handleLaunchExercise(ex, e)}
+                  >
+                    <span>{pct === 0 ? 'Start' : pct === 100 ? 'Review' : 'Continue'} →</span>
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="files-empty-card ultra-minimal">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <p className="empty-desc">No exercises found</p>
+        </div>
+      )}
     </div>
   )
 }
