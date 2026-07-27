@@ -60,6 +60,10 @@ export default function FilesPage() {
   const [newFileName, setNewFileName] = useState('')
   const [newFileLang, setNewFileLang] = useState<'learn' | 'python'>('learn')
 
+  // Drag & Drop State for File Cards
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
+
   useEffect(() => {
     localStorage.setItem('gradenext_user_files', JSON.stringify(files))
   }, [files])
@@ -99,6 +103,37 @@ export default function FilesPage() {
     } else {
       navigate('/', { state: { code: file.code } })
     }
+  }
+
+  // Drag Handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIdx(index)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', index.toString())
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (dragOverIdx !== index) {
+      setDragOverIdx(index)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    if (draggedIdx === null || draggedIdx === dropIndex) {
+      setDraggedIdx(null)
+      setDragOverIdx(null)
+      return
+    }
+
+    const updated = [...files]
+    const [movedItem] = updated.splice(draggedIdx, 1)
+    updated.splice(dropIndex, 0, movedItem)
+    setFiles(updated)
+    setDraggedIdx(null)
+    setDragOverIdx(null)
   }
 
   const filteredFiles = files.filter(f => {
@@ -166,11 +201,20 @@ export default function FilesPage() {
         </div>
       </div>
 
-      {/* Minimal Folder Cards Grid */}
+      {/* Reorderable Draggable Folder Cards Grid */}
       {filteredFiles.length > 0 ? (
         <div className="folder-grid ultra-minimal">
-          {filteredFiles.map(file => (
-            <div className="folder-card ultra-minimal" key={file.id} onClick={() => openFile(file)}>
+          {filteredFiles.map((file, idx) => (
+            <div
+              className={`folder-card ultra-minimal draggable ${draggedIdx === idx ? 'is-dragging' : ''} ${dragOverIdx === idx ? 'is-drag-over' : ''}`}
+              key={file.id}
+              draggable={true}
+              onDragStart={(e) => handleDragStart(e, idx)}
+              onDragOver={(e) => handleDragOver(e, idx)}
+              onDrop={(e) => handleDrop(e, idx)}
+              onDragEnd={() => { setDraggedIdx(null); setDragOverIdx(null); }}
+              onClick={() => openFile(file)}
+            >
               {/* Folder Top Tab Curve */}
               <div className="folder-card-tab">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>

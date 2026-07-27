@@ -5981,9 +5981,37 @@ button {
   background: var(--card-bg);
   border: 1px solid var(--border-glass-strong);
   border-radius: 0 14px 14px 14px;
-  cursor: pointer;
+  cursor: grab;
+  user-select: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.folder-card.ultra-minimal:active {
+  cursor: grabbing;
+}
+
+.folder-card.ultra-minimal.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.95);
+  border-style: dashed !important;
+  border-color: #8E5BFF !important;
+}
+
+.folder-card.ultra-minimal.is-drag-over {
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.45) !important;
+  transform: translateY(-4px) scale(1.02);
+}
+
+.chrome-top-tab {
+  cursor: grab;
+}
+
+.chrome-top-tab:active,
+.chrome-top-tab.is-dragging-tab {
+  cursor: grabbing;
+  opacity: 0.5;
 }
 
 .folder-card.ultra-minimal:hover {

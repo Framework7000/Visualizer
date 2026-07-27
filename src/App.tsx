@@ -33,6 +33,34 @@ function VisualiserPage({
   learnModeTriggerRun: React.MutableRefObject<(() => void) | null>
   learnModeSelectExample: React.MutableRefObject<((id: string) => void) | null>
 }) {
+  const [tabOrder, setTabOrder] = useState<ModeName[]>(['learn', 'python'])
+  const [draggedTabIdx, setDraggedTabIdx] = useState<number | null>(null)
+
+  const handleTabDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedTabIdx(index)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleTabDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const handleTabDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    if (draggedTabIdx === null || draggedTabIdx === dropIndex) {
+      setDraggedTabIdx(null)
+      return
+    }
+    const updated = [...tabOrder]
+    const [moved] = updated.splice(draggedTabIdx, 1)
+    updated.splice(dropIndex, 0, moved)
+    setTabOrder(updated)
+    setDraggedTabIdx(null)
+  }
+
+  const activeTabIdx = tabOrder.indexOf(mode)
+
   return (
     <div className="visualiser-page-container">
       <div className="chrome-safari-top-tabstrip">
@@ -41,36 +69,42 @@ function VisualiserPage({
           <div
             className="chrome-tab-slider"
             style={{
-              left: mode === 'learn' ? '4px' : 'calc(50% + 2px)',
+              left: activeTabIdx === 0 ? '4px' : 'calc(50% + 2px)',
               width: 'calc(50% - 6px)',
             }}
           />
 
-          <button
-            role="tab"
-            aria-selected={mode === 'learn'}
-            className={`chrome-top-tab ${mode === 'learn' ? 'active' : ''}`}
-            onClick={() => setMode('learn')}
-          >
-            <svg className="chrome-tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
-            <span className="chrome-tab-title">Learn</span>
-          </button>
-
-          <button
-            role="tab"
-            aria-selected={mode === 'python'}
-            className={`chrome-top-tab ${mode === 'python' ? 'active' : ''}`}
-            onClick={() => setMode('python')}
-          >
-            <svg className="chrome-tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="4 17 10 11 4 5" />
-              <line x1="12" y1="19" x2="20" y2="19" />
-            </svg>
-            <span className="chrome-tab-title">Real Python</span>
-          </button>
+          {tabOrder.map((tMode, idx) => (
+            <button
+              key={tMode}
+              role="tab"
+              aria-selected={mode === tMode}
+              draggable={true}
+              onDragStart={(e) => handleTabDragStart(e, idx)}
+              onDragOver={handleTabDragOver}
+              onDrop={(e) => handleTabDrop(e, idx)}
+              className={`chrome-top-tab ${mode === tMode ? 'active' : ''} ${draggedTabIdx === idx ? 'is-dragging-tab' : ''}`}
+              onClick={() => setMode(tMode)}
+            >
+              {tMode === 'learn' ? (
+                <>
+                  <svg className="chrome-tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                  </svg>
+                  <span className="chrome-tab-title">Learn</span>
+                </>
+              ) : (
+                <>
+                  <svg className="chrome-tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="4 17 10 11 4 5" />
+                    <line x1="12" y1="19" x2="20" y2="19" />
+                  </svg>
+                  <span className="chrome-tab-title">Real Python</span>
+                </>
+              )}
+            </button>
+          ))}
         </div>
       </div>
 
