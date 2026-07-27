@@ -1,125 +1,112 @@
-# ✨ GradeNext — Watch Your Code Come Alive
+# Visualizer - Interactive Code Execution Platform
 
-A coding platform for **young learners (grades 2–8)**. Students type real code on
-one side and watch it run — step by step, like a video — on the other. Variables
-appear as memory boxes, lists animate as bars (great for sorting!), loops and
-`if`-checks are narrated in plain, friendly language, and `print(...)` output
-shows up on a little screen.
+Visualizer is a web-based learning environment designed for students in grades 2 to 8. It allows learners to write real Python code on one side and watch its execution step-by-step like a video on the other side. Memory variables appear as visual boxes, array operations render as dynamic bar charts, and code execution is narrated in plain language.
 
-The goal is simple: help a child's brain *see* how code works, not just read it.
+## Overview
 
-![GradeNext screenshot](docs/screenshot.png)
+Traditional coding environments show only the final output of a script, leaving the intermediate execution state invisible. Visualizer solves this by recording program state at every line of execution, allowing students to play, pause, rewind, and scrub through their code frame-by-frame.
 
-## Two modes
+The project features two distinct learning environments:
 
-GradeNext has a mode switch in the top-right:
+- Learn Mode: A lightweight, deterministic execution engine tailored for teaching foundational programming concepts including variables, conditional branching, loops, and sorting algorithms.
+- Real Python Mode: Full Python 3.11 execution in the browser powered by WebAssembly (Pyodide). Supports standard libraries along with NumPy, Pandas, Matplotlib, and Scikit-Learn for data visualization.
 
-- **🎓 Learn** — the animated, step-by-step visualiser for a small, safe
-  beginner language. Great for fundamentals: variables, loops, lists, sorting.
-- **🐍 Real Python** — runs **genuine Python in your browser** via
-  [Pyodide](https://pyodide.org), including `numpy`, `pandas`, `scikit-learn`
-  and `matplotlib`. Real data-science and machine-learning code runs here, with
-  console output and charts. (Deep-learning frameworks like TensorFlow/PyTorch
-  and GenAI APIs are **not** supported — they can't run inside a browser.)
+## Key Features
 
-> **Real Python needs the internet.** The first run downloads the Python runtime
-> (~10 MB) from a CDN, so this mode does **not** work inside a sandboxed preview
-> that blocks outside requests — run the app locally or deploy it. The Learn mode
-> works fully offline once loaded.
+- Frame-by-Frame Execution: Full transport controls including play, pause, step forward, step backward, speed adjustment (0.5x to 4x), and timeline scrubbing.
+- Visual Memory Grid: Live inspection of active variables, data types, and scope.
+- Array & Pointer Visualization: Number arrays render as reactive bar graphs highlighting read, compare, and write operations during sorting algorithm execution.
+- Call Stack Tracking: Real-time visualization of function call stack frames and recursion depth.
+- Terminal Output Simulation: Streamed stdout logging aligned with execution line steps.
+- Light & Dark Theme Support: Tailored theme system optimized for readability and classroom usage.
+- Cross-Device Responsive Layout: Full support for desktop viewports and mobile devices with bottom navigation integration.
 
-## Why this exists
+## Supported Language Features (Learn Mode)
 
-Beginners can copy code without understanding what happens inside the computer.
-GradeNext turns each line into an animated, narrated step you can **play, pause,
-rewind, and scrub** — turning an abstract idea into something you can watch.
+Learn Mode supports a safe, structured subset of Python syntax:
 
-## Features
+- Variables and arithmetic operations
+- String manipulation and formatted console output
+- List data structures with zero-based indexing
+- Conditional statements (if, elif, else) and boolean logic
+- Iteration constructs (for loops, range iterations, while loops)
+- Helper built-ins (len, range, append, min, max, sum, abs)
 
-- 🎬 **Video-style playback** — play / pause / step / restart, a scrubber, and
-  0.5×–4× speeds. Every step is one "frame" of the program.
-- 📦 **Live memory** — every variable is shown as a box that pops when it changes.
-- 📊 **Animated lists** — number lists render as bars; cells being **compared**
-  glow amber and cells being **written** glow green. Bubble sort looks magical.
-- 🖨️ **Output screen** — `print(...)` lines appear one by one.
-- 🗣️ **Kid-friendly narration** — each step says what just happened
-  ("Set total = 35", "Check the rule → YES ✅", "Loop: i = 3").
-- 🧒 **Friendly errors** — plain-English messages with the line number, and it
-  can never freeze the browser (steps and loops are capped).
-- 🎈 **Seven built-in examples** from counting stars to a sorting machine.
-- 🧭 **Pointer arrows** — index variables (`i`, `j`, `pivot`…) show as badges under
-  the exact list cells they point to, so loops and searches make sense.
-- 🧱 **Call-stack panel** — recursive programs (e.g. quicksort) show the live call
-  stack and depth.
-- 🌗 **Light & dark themes**, a **Share link** (the program is packed into the URL),
-  **autosave**, and **keyboard shortcuts** (space = play/pause, ← → = step).
-
-## The mini-language
-
-A small, safe subset of Python chosen so it stays approachable:
-
-- Variables & math: `x = 3 + 4 * 2`
-- Text: `name = "Sam"`, `print("Hi", name)`
-- Lists & indexing: `nums = [5, 2, 8]`, `nums[0] = 9`, `len(nums)`, `append(nums, 4)`
-- Decisions: `if / elif / else` with `and`, `or`, `not`
-- Loops: `for i in range(5):`, `for item in list:`, `while count > 0:`
-- Helpers: `range`, `len`, `append`, `int`, `abs`, `sum`, `min`, `max`
-- `break` and `continue`
-
-Blocks use indentation, just like Python.
-
-## Run it locally
-
-```bash
-npm install
-npm run dev      # open the printed http://localhost:5173 URL
-```
-
-Other scripts:
-
-```bash
-npm run build    # type-check + production build into dist/
-npm run preview  # preview the production build
-```
-
-Requires Node 18+.
-
-## How it works
+## Project Structure
 
 ```
-src/
-  lang/
-    tokenizer.ts     # text  -> tokens (one line at a time)
-    parser.ts        # tokens -> AST (indentation-based, recursive descent)
-    interpreter.ts   # AST   -> an array of "frames" (state snapshots)
-    examples.ts      # the built-in sample programs
-    types.ts         # shared types (Frame, Value, ...)
-  python/
-    pyodideRunner.ts # loads Pyodide, runs real Python, captures output + plots
-    examples.ts      # real-Python samples (pandas, matplotlib, scikit-learn)
-  components/
-    CodeEditor.tsx   # textarea + highlight strip for the running line
-    Stage.tsx        # the "movie screen": narration + variables + console
-    VariablesPanel.tsx / ArrayViz.tsx / Console.tsx
-    Player.tsx       # the video-style transport controls
-  modes/
-    LearnMode.tsx    # the animated visualiser workspace
-    PythonLab.tsx    # the Real Python workspace (editor + output + charts)
-  App.tsx            # mode switch + shell
+visualiseGradeNext/
+├── public/                 Static assets and web icons
+├── src/
+│   ├── components/         Reusable UI components (Stage, CodeEditor, Player, TopBar, Sidebar)
+│   ├── lang/               Interpreter, tokenizer, parser, and AST frame generator
+│   ├── lib/                Firebase integration, audio synthesis, and utility helpers
+│   ├── modes/              LearnMode and PythonLab workspace interfaces
+│   ├── pages/              Application pages (Home, Dashboard, Exercises, Leaderboard, Workbench)
+│   ├── python/             Pyodide WebAssembly runner and example scripts
+│   ├── App.tsx             Primary routing and layout shell
+│   ├── main.tsx            Application entry point
+│   └── styles.css          Design system tokens and responsive stylesheet
+├── index.html              HTML template
+├── package.json            Project dependencies and build scripts
+└── vite.config.ts          Vite build configuration
 ```
 
-The interpreter runs the whole program up front and records a **frame** after
-every small step (each frame is a full snapshot: the current line, all
-variables, output so far, a narration note, and which list cells were touched).
-The UI then just plays those frames like a flip-book — which is what makes
-scrubbing, stepping, and speed changes instant.
+## How the Visualizer Engine Works
 
-## Ideas for later
+1. Lexical Analysis & Parsing: Code is tokenized line-by-line and converted into an Abstract Syntax Tree (AST).
+2. Snapshot Interpretation: The interpreter executes the AST up-front and generates an ordered sequence of Frame objects. Each frame captures the active line number, variable environment snapshot, array access markers (read/write/compare), call stack depth, and narration note.
+3. Reactive Frame Rendering: The UI consumes the pre-computed frame sequence, providing instantaneous time-travel scrubbing with zero runtime delay.
 
-- Save & share a student's program via a link
-- A drag-and-drop block mode for the youngest learners
-- User-defined functions and simple turtle/drawing output
-- Teacher dashboards and guided lessons
+## Getting Started
 
----
+### Prerequisites
 
-Built as a first working MVP. Contributions and classroom feedback welcome!
+- Node.js version 18.0 or higher
+- npm (Node Package Manager)
+
+### Local Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Framework7000/Visualizer.git
+   cd Visualizer
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to:
+   ```
+   http://localhost:5173
+   ```
+
+### Build and Deployment
+
+- Typecheck code:
+  ```bash
+  npm run typecheck
+  ```
+
+- Build production bundle:
+  ```bash
+  npm run build
+  ```
+
+- Deploy to GitHub Pages:
+  ```bash
+  npm run deploy
+  ```
+
+The production build will be output to the `dist/` directory and published to the `gh-pages` branch.
+
+## License
+
+Distributed under the MIT License. See LICENSE for more information.
