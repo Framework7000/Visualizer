@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import AuthModal from './AuthModal'
 import GradeNextLogo from './Logo'
@@ -50,7 +50,9 @@ export default function TopBar({ theme, onToggleTheme, soundEnabled, onToggleSou
       <header className="portal-topbar">
         {/* Left: Brand Logo */}
         <div className="topbar-left">
-          <GradeNextLogo height={42} />
+          <Link to="/" title="GradeNext Home">
+            <GradeNextLogo height={38} />
+          </Link>
         </div>
 
         {/* Center: Main Navigation */}

@@ -203,20 +203,27 @@ button {
   animation: tmPulse 2.5s ease-in-out infinite alternate;
 }
 
-@keyframes capFloat {
-  0% { transform: translateY(0px) rotate(0deg); }
-  100% { transform: translateY(-2.5px) rotate(1.5deg); }
+.gradenext-official-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
 }
 
-@keyframes logoXPulse {
-  0% { opacity: 0.8; filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.5)); transform: scale(1); }
-  50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9)); transform: scale(1.05); }
-  100% { opacity: 0.95; filter: drop-shadow(0 0 16px rgba(244, 63, 94, 0.8)); transform: scale(1.02); }
+.gradenext-official-brand:hover {
+  transform: scale(1.04);
 }
 
-@keyframes tmPulse {
-  0% { opacity: 0.7; fill: #38BDF8; }
-  100% { opacity: 1; fill: #A855F7; filter: drop-shadow(0 0 6px #A855F7); }
+.gradenext-official-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  transition: filter 0.25s ease;
+}
+
+.gradenext-official-brand:hover .gradenext-official-logo-img {
+  filter: drop-shadow(0 4px 16px rgba(138, 43, 226, 0.65)) !important;
 }
 
 .brand-subtitle {
@@ -6397,17 +6404,24 @@ button {
 
 .folder-open-btn.ultra-minimal {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 800;
-  color: #8E5BFF;
-  background: transparent;
+  color: #FFFFFF !important;
+  background: var(--folder-accent, #8E5BFF) !important;
   border: none;
+  border-radius: 8px;
+  padding: 5px 14px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25), 0 0 12px var(--folder-accent, rgba(142, 91, 255, 0.35));
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.folder-card.ultra-minimal:hover .folder-open-btn.ultra-minimal {
-  transform: translateX(2px);
+.folder-open-btn.ultra-minimal:hover {
+  transform: scale(1.07) translateX(2px) !important;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.35), 0 0 18px var(--folder-accent, rgba(142, 91, 255, 0.6)) !important;
 }
 
 .files-empty-card.ultra-minimal {
